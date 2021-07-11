@@ -1,0 +1,75 @@
+{
+  "name": "@esp32m/ui",
+  "version": "0.1.0",
+  "description": "User interface for ESP32 Manager",
+  "keywords": [
+    "esp32",
+    "esp32m",
+    "ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esp32m/ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/esp32m/ui/issues"
+  },
+  "homepage": "https://esp32m.com/",
+  "author": "Denys Yarkovyi",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .ts",
+    "analyze": "source-map-explorer ./build/**/*.js",
+    "prebuild": "rimraf build",
+    "build": "tsc",
+    "prepare": "yarn lint && yarn build"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.1",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@material-ui/styles": "^4.11.4",
+    "@mui-treasury/layout": "^4.5.0",
+    "connected-react-router": "^6.8.0",
+    "deep-object-diff": "^1.1.0",
+    "formik": "^2.2.6",
+    "history": "4.10.1",
+    "immutable": "^4.0.0-rc.14",
+    "lodash": "^4.17.20",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-is": "^17.0.1",
+    "react-redux": "^7.2.4",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-text-mask": "^5.4.3",
+    "react-window": "^1.8.5",
+    "reconnecting-websocket": "^4.4.0",
+    "redux": "^4.1.0",
+    "redux-thunk": "^2.3.0",
+    "seamless-immutable": "^7.1.4",
+    "styled-components": "^5.1.1",
+    "yup": "^0.32.8"
+  },
+  "devDependencies": {
+    "@types/history": "4.7.9",
+    "@types/lodash": "^4.14.171",
+    "@types/react": "^17.0.4",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-redux": "^7.1.18",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/react-text-mask": "^5.4.6",
+    "@types/react-window": "^1.8.3",
+    "@types/styled-components": "^5.1.5",
+    "@types/yup": "^0.29.13",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.28.0",
+    "prettier": "2.3.2",
+    "source-map-explorer": "^2.5.1",
+    "typescript": "^4.1.3"
+  }
+}
