@@ -1,12 +1,12 @@
-import { Scanner } from '@material-ui/icons';
-import { once } from 'lodash';
+import { Scanner } from '@mui/icons-material';
+import { once } from 'lodash-es';
 
-import { Plugins } from '../plugins';
+import { registerPlugin } from '../plugins';
 
 import Scanners from './Scanners';
 
 export const useScanners = once(() => {
-  Plugins.register({
+  registerPlugin({
     name: 'bus-scanners',
     content: { title: 'Bus scanners', icon: Scanner, component: Scanners },
   });

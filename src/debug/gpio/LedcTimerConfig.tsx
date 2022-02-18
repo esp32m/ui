@@ -12,14 +12,15 @@ import {
   FormControlLabel,
   Grid,
   InputLabel,
-  makeStyles,
   Select,
+  SelectChangeEvent,
   Switch,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import { Backend, MuiField, MuiForm } from '../..';
+import { Backend, FieldText, MuiForm, FieldSelect } from '../..';
 import { LedctsConfig, LedctConfig, LedcMode, LedcClkCfg, Name } from './types';
 import { LedcModes, LedcTimers, toMenuItem } from './tools';
+import { styled } from '@mui/material/styles';
 
 export interface ILedctConfig {
   mode: LedcMode;
@@ -59,13 +60,13 @@ function toConciseConfig(config: ILedctConfig): LedctConfig {
   return [c.mode, c.dutyres, c.freq, c.clk];
 }
 
-const useStyles = makeStyles({
-  switch: { marginRight: 0, marginLeft: 'auto' },
+const SwitchLabel = styled(FormControlLabel)({
+   marginRight: 0, marginLeft: 'auto' 
 });
 
 const ValidationSchema = Yup.object().shape({
   dutyres: Yup.number().integer().min(1).max(20),
-  freq: Yup.number().integer().min(130).max(55000),
+  freq: Yup.number().integer().min(1).max(40*1000*1000),
 });
 
 const component = (props: {
@@ -79,7 +80,6 @@ const component = (props: {
     config.reduce((p, c, i) => (c ? p | (1 << i) : 0), 0) || 0
   );
   const data = useRef<Array<ILedctConfig>>(config.map(fromConciseConfig));
-  const classes = useStyles();
   const handleClose = () => {
     onClose();
   };
@@ -103,7 +103,7 @@ const component = (props: {
   };
   const fieldProps = {
     fullWidth: true,
-    componentProps: { disabled: !enabled },
+    disabled: !enabled,
   };
   const getValues = () => data.current[timer] || DefaultLedctConfig;
   return (
@@ -115,7 +115,7 @@ const component = (props: {
     >
       {(controller: FormikProps<any>) => {
         const handleTimerChange = (
-          event: React.ChangeEvent<{ value: unknown }>
+          event: SelectChangeEvent<number>
         ) => {
           if (enabled)
             data.current[timer] = Object.assign({}, controller.values);
@@ -141,8 +141,7 @@ const component = (props: {
                   </FormControl>
                 </Grid>
                 <Grid item xs={6}>
-                  <FormControlLabel
-                    className={classes.switch}
+                  <SwitchLabel
                     control={
                       <Switch checked={enabled} onChange={handleSwitchChange} />
                     }
@@ -152,34 +151,32 @@ const component = (props: {
               </Grid>
               <Grid container spacing={3}>
                 <Grid item xs={6}>
-                  <MuiField
-                    look="select"
+                  <FieldSelect
                     name="mode"
                     label="LEDC mode"
                     {...fieldProps}
                   >
                     {LedcModes.map(toMenuItem)}
-                  </MuiField>
+                  </FieldSelect>
                 </Grid>
                 <Grid item xs={6}>
-                  <MuiField
+                  <FieldText
                     name="dutyres"
                     label="Duty resolution"
                     {...fieldProps}
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <MuiField name="freq" label="Frequency" {...fieldProps} />
+                  <FieldText name="freq" label="Frequency" {...fieldProps} />
                 </Grid>
                 <Grid item xs={6}>
-                  <MuiField
-                    look="select"
+                  <FieldSelect
                     name="clk"
                     label="Clock source"
                     {...fieldProps}
                   >
                     {LedcClks.map(toMenuItem)}
-                  </MuiField>
+                  </FieldSelect>
                 </Grid>
               </Grid>
             </DialogContent>

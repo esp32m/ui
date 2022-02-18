@@ -1,13 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { Name, IState, IProps } from './types';
-import * as Backend from '../../backend';
-import { WidgetBox, NameValueList, useModuleState } from '../../app';
+import { WidgetBox, NameValueList, useModuleState } from '../..';
 
-export default connect((state: any) => ({
-  state: Backend.selectState<IState>(state, Name),
-}))(({ state, title, addr }: { state: IState } & IProps) => {
-  useModuleState(Name);
+export default ({ title, addr }: IProps) => {
+  const state = useModuleState<IState>(Name);
   if (!state) return null;
   const { addr: a, temperature, pressure, humidity } = state;
   if (addr && addr != a) return null;
@@ -28,4 +23,4 @@ export default connect((state: any) => ({
       <NameValueList list={list as any} />
     </WidgetBox>
   );
-});
+};

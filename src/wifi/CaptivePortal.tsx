@@ -1,8 +1,7 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { Grid } from '@material-ui/core';
+import { Route, Navigate } from 'react-router-dom';
+import { Grid } from '@mui/material';
 
-import { Plugins } from '../plugins';
+import { registerPlugin } from '../plugins';
 
 import ScannerBox from './ScannerBox';
 import StaInfoBox from './StaInfoBox';
@@ -17,16 +16,15 @@ const CaptivePortal = () => (
 );
 
 export const useCaptivePortal = () => {
-  Plugins.register({
+  registerPlugin({
     name: 'cp',
     content: { component: CaptivePortal },
     routes: [
       (p: any) => (
         <Route
-          exact
           path="/generate_204"
           {...p}
-          render={() => <Redirect to="/cp" />}
+          element={<Navigate to="/cp" />}
         />
       ),
     ],

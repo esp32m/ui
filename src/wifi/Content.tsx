@@ -1,5 +1,4 @@
-import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 
 import ScannerBox from './ScannerBox';
 import StaInfoBox from './StaInfoBox';

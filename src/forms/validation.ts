@@ -1,18 +1,4 @@
-import React from 'react';
 import * as Yup from 'yup';
-import { ObjectShape } from 'yup/lib/object';
-import { AnySchema } from 'yup/lib/schema';
-
-export interface Y {
-  string: typeof Yup.string;
-  number: typeof Yup.number;
-  object: typeof Yup.object;
-}
-
-interface IValidationContext {
-  yup?: ObjectShape;
-  addRule: (name: string, schema: AnySchema) => void;
-}
 
 function ipv4(this: Yup.StringSchema, message = 'Invalid IP address') {
   return this.matches(/(^(\d{1,3}\.){3}(\d{1,3})$)/, {
@@ -30,10 +16,6 @@ Yup.addMethod(Yup.string, 'ipv4', ipv4);
 interface StringSchema extends Yup.StringSchema {
   ipv4: () => this;
 }
-
-export const ValidationContext = React.createContext<IValidationContext>({
-  addRule: () => undefined,
-});
 
 export const validators = {
   pin: Yup.number().integer().min(1).max(39).notOneOf([20, 24, 28, 29, 30, 31]),

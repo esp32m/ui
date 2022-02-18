@@ -1,21 +1,21 @@
-import React from 'react';
-import { Plugins } from '..';
-import { Grid } from '@material-ui/core';
+import React, { useMemo } from 'react';
+import { usePlugins } from '..';
+import { Grid } from '@mui/material';
 import { IDebugPlugin } from './types';
 
 export default () => {
-  const widgets: Array<React.ReactElement> = [];
-  const plugins = Plugins.all();
-  plugins.forEach((p, i) => {
-    const dp = p as IDebugPlugin;
-    if (dp.debug?.content)
-      widgets.push(
-        React.createElement(
-          dp.debug.content,
-          Object.assign({ key: 'debug_' + i }, dp.debug.props)
-        )
-      );
-  });
-
+  const plugins = usePlugins<IDebugPlugin>();
+  const widgets: Array<React.ReactElement> = useMemo(
+    () =>
+      plugins
+        .filter((p) => !!p.debug?.content)
+        .map(({ debug }, i) =>
+          React.createElement(
+            debug.content,
+            Object.assign({ key: 'debug_' + i }, debug.props)
+          )
+        ),
+    [plugins]
+  );
   return <Grid container>{widgets}</Grid>;
 };

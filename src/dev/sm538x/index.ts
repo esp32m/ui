@@ -1,10 +1,10 @@
 import { useDevices } from '../shared';
-import { Plugins } from '../../plugins';
+import { registerPlugin } from '../../plugins';
 import Content from './Content';
 
 export const useSm538x = (name: string, title?: string): void => {
   useDevices();
-  Plugins.register({
+  registerPlugin({
     name,
     device: { component: Content, props: { name, title } },
   });

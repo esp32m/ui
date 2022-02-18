@@ -13,7 +13,9 @@ export interface IState {
   state: RelayState;
 }
 
+export type NameOrList = string | Array<[string, string]> | Array<string>;
+
 export interface IMultiProps {
-  nameOrList: string | Array<[string, string]>;
+  nameOrList: NameOrList;
   title?: string;
 }

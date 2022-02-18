@@ -1,5 +1,4 @@
-import { MenuItem } from '@material-ui/core';
-import React from 'react';
+import { MenuItem } from '@mui/material';
 import { LedcMode } from './types';
 
 export const toMenuItem = (e: Array<any>, i: number) => (

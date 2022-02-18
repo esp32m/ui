@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
-import once from 'lodash/once';
+import { once } from 'lodash-es';
 
-import { fromBase64, Plugins } from '../..';
+import { fromBase64, registerPlugin } from '../..';
 import { useBt } from '../shared';
 
 import Content from './Content';
@@ -72,5 +72,5 @@ const reducer = (state: ILocalState = {}, { type, payload }: AnyAction) => {
 
 export const useBle = once(() => {
   useBt();
-  Plugins.register({ name: Name, reducer, bt: { content: Content } });
+  registerPlugin({ name: Name, reducer, bt: { content: Content } });
 });

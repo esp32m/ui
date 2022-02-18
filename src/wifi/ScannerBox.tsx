@@ -1,21 +1,18 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { PermScanWifiTwoTone } from '@material-ui/icons';
-import { Avatar } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import { PermScanWifiTwoTone } from '@mui/icons-material';
+import { Avatar } from '@mui/material';
 
-import * as Backend from '../backend';
-import { WidgetBox } from '../app';
+import { useModuleState, WidgetBox } from '..';
 
 import { select } from './utils';
 import { Name, ScanEntries, IWifiState, WifiStatus, IRootState } from './types';
-import { UnconnectedScanList } from './ScanList';
+import ScanList from './ScanList';
 
-interface IProps {
-  scan: ScanEntries;
-  state: IWifiState;
-}
-
-function ScannerBox({ scan, state }: IProps) {
+export default () => {
+  const state = useModuleState<IWifiState>(Name);
+  const scan = useSelector<IRootState, ScanEntries>(
+    (state) => select(state)?.scan
+  );
   const { status } = state || {};
   const scanning = !scan || !!(status & WifiStatus.Scanning);
   return (
@@ -28,12 +25,7 @@ function ScannerBox({ scan, state }: IProps) {
         </Avatar>
       }
     >
-      <UnconnectedScanList {...{ scan, state }} />
+      <ScanList />
     </WidgetBox>
   );
-}
-
-export default connect((state: IRootState) => ({
-  state: Backend.selectState<IWifiState>(state, Name),
-  scan: select(state)?.scan,
-}))(ScannerBox);
+};

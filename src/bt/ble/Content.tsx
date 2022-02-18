@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import * as Backend from '../../backend';
-import { WidgetBox } from '../../app';
+import { WidgetBox } from '../..';
 
 import { Name, ILocalState } from './types';
-import { Bluetooth } from '@material-ui/icons';
+import { Bluetooth } from '@mui/icons-material';
 import {
   Avatar,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-} from '@material-ui/core';
-import { connect } from 'react-redux';
+} from '@mui/material';
+import { useSelector } from 'react-redux';
 import RssiIcon from '../RssiIcon';
 
 interface IRootState extends Backend.IRootState {
@@ -30,13 +30,16 @@ const request = (name: string, data?: Backend.Data) => {
   });
 };
 
-function Box({ local }: { local: ILocalState }) {
+const select = (state: IRootState): ILocalState => state?.[Name];
+
+export default () => {
   useEffect(() => {
     request('scan', { active: true });
     return () => {
       cancelAsync();
     };
   }, []);
+  const local = useSelector(select);
   const { peripherals } = local || {};
   return (
     <WidgetBox
@@ -68,11 +71,4 @@ function Box({ local }: { local: ILocalState }) {
       )}
     </WidgetBox>
   );
-}
-
-const select = (state: IRootState): ILocalState => state?.[Name];
-
-export default connect((state: IRootState) => ({
-  // state: Backend.selectState<IState>(state, Name),
-  local: select(state),
-}))(Box);
+};

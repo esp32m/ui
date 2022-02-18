@@ -1,16 +1,51 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
-import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
 
 import { IAppModel, RouteCreators } from './types';
-import WithBackend from './WithBackend';
-import { StylesProvider } from '@material-ui/styles';
-import CssBaseline from '@material-ui/core/CssBaseline/CssBaseline';
-import StateFetcher from './StateFetcher';
+import { useSelector } from 'react-redux';
+import { CircularProgress } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+import * as Backend from '../backend';
+import { OtaProgress } from './Ota';
+import { IRootState } from '../backend';
+import { ModuleStateProvider } from './State';
+import { CollapseDrawerProvider } from '../components/navbar';
+import DashboardLayout from './DashboardLayout';
+import { ThemeProvider } from '..';
+import { AppModelContext } from './model';
+
+const Center = styled('div')({
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+});
+
+function WithBackend({ children }: React.PropsWithChildren<unknown>) {
+  const socket = useSelector<IRootState>(
+    (state) => Backend.select(state)?.socket
+  );
+  useEffect(() => {
+    if (socket == Backend.SocketState.Connected) Backend.requestState('ota');
+  }, [socket]);
+  if (socket != Backend.SocketState.Connected) {
+    return (
+      <Center>
+        <CircularProgress />
+      </Center>
+    );
+  }
+  return (
+    <>
+      {children}
+      <OtaProgress />
+    </>
+  );
+}
 
 interface IProps {
-  history: any;
   store: any;
   model: IAppModel;
   routes: RouteCreators;
@@ -19,29 +54,32 @@ interface IProps {
 const NotFound = () => <span>"Not Found!"</span>;
 
 function Root(props: IProps) {
-  const { store, history, model } = props;
-  const C = model.root ? withRouter(model.root() as any) : React.Fragment;
+  const { store, model } = props;
+  const C = model.root ? (model.root() as React.ElementType) : DashboardLayout;
   const routes = props.routes.map((r, i) => r({ key: 'route-' + i }));
   const content = (
     <WithBackend>
-      <Switch>
+      <Routes>
         {routes}
-        <Route exact path="/" render={() => <Redirect to="/home" />} />
-        <Route component={NotFound} />
-      </Switch>
+        <Route path="/" element={<Navigate to="/home" />} />
+        <Route element={<NotFound />} />
+      </Routes>
     </WithBackend>
   );
   return (
-    <StylesProvider injectFirst>
-      <CssBaseline />
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <StateFetcher>
-            <C> {content} </C>
-          </StateFetcher>
-        </ConnectedRouter>
-      </Provider>
-    </StylesProvider>
+    <ThemeProvider>
+      <AppModelContext.Provider value={model}>
+        <CollapseDrawerProvider>
+          <Provider store={store}>
+            <BrowserRouter>
+              <ModuleStateProvider>
+                <C> {content} </C>
+              </ModuleStateProvider>
+            </BrowserRouter>
+          </Provider>
+        </CollapseDrawerProvider>
+      </AppModelContext.Provider>
+    </ThemeProvider>
   );
 }
 

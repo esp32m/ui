@@ -1,8 +1,5 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { IProps, IState } from './types';
-import * as Backend from '../../backend';
-import { WidgetBox, NameValueList, useModuleState } from '../../app';
+import { WidgetBox, NameValueList, useModuleState } from '../..';
 
 const Defs: { [key: number]: any } = {
   5386: {
@@ -15,12 +12,10 @@ const Defs: { [key: number]: any } = {
   },
 };
 
-export default connect((state: any, props: IProps) => ({
-  state: Backend.selectState<IState>(state, props.name),
-}))(({ state, name, title }: { state: IState } & IProps) => {
-  useModuleState(name);
+export default ({ name, title }: IProps) => {
+  const state = useModuleState<IState>(name);
   if (!state || !state.length) return null;
-  const [age = -1, a, model = 0, value] = state;
+  const [age = -1, , model = 0, value] = state;
   if (age < 0 || age > 60 * 1000) return null;
   const list = [];
   if (model) list.push(['Model', model]);
@@ -33,4 +28,4 @@ export default connect((state: any, props: IProps) => ({
       <NameValueList list={list as any} />
     </WidgetBox>
   );
-});
+};

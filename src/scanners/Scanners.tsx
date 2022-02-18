@@ -1,21 +1,21 @@
-import React from 'react';
-import { Plugins } from '..';
-import { Grid } from '@material-ui/core';
+import React, { useMemo } from 'react';
+import { usePlugins } from '..';
+import { Grid } from '@mui/material';
 import { IScannerPlugin } from './types';
 
 export default function Scanners(): JSX.Element {
-  const widgets: Array<React.ReactElement> = [];
-  const plugins = Plugins.all();
-  plugins.forEach((p, i) => {
-    const bp = p as IScannerPlugin;
-    if (bp.scanner?.component)
-      widgets.push(
-        React.createElement(
-          bp.scanner?.component,
-          Object.assign({ key: 'scanner_' + i }, bp.scanner?.props)
-        )
-      );
-  });
-
+  const plugins = usePlugins<IScannerPlugin>();
+  const widgets: Array<React.ReactElement> = useMemo(
+    () =>
+      plugins
+        .filter((p) => !!p.scanner?.component)
+        .map(({ scanner }, i) =>
+          React.createElement(
+            scanner.component,
+            Object.assign({ key: 'scanner_' + i }, scanner?.props)
+          )
+        ),
+    [plugins]
+  );
   return <Grid container>{widgets}</Grid>;
 }

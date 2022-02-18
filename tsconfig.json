@@ -1,26 +1,10 @@
 {
-  "exclude": ["./tests", "./coverage", "./dist"],
+  "extends": "./config/tsconfig.shared.json",
+  "exclude": ["./tests", "./coverage", "./dist", "./node_modules"],
   "include": ["./src"],
-  "compileOnSave": true,
   "compilerOptions": {
     "outDir": "dist",
-    "module": "esnext",
-    "target": "esnext" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */,
-    "lib": [
-      "dom",
-      "es2015",
-      "es2018"
-    ] /* Specify library files to be included in the compilation. */,
-    "jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
-    "declaration": true /* Generates corresponding '.d.ts' file. */,
-    "declarationMap": true,
-    "strict": true /* Enable all strict type-checking options. */,
-    "allowSyntheticDefaultImports": true /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */,
-    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
-    "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
-    "inlineSourceMap": true /* Generates corresponding '.map' file. */,
-    "inlineSources": true /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */,
-    "skipLibCheck": true
+    "declaration": true,
+    "declarationMap": true
   }
 }

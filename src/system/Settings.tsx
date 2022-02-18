@@ -1,30 +1,14 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { FormikConsumer } from 'formik';
-import {
-  Grid,
-  MenuItem,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-} from '@material-ui/core';
+import { Grid, MenuItem } from '@mui/material';
 
 import { Name, ISystemConfig } from './types';
 import {
-  Backend,
-  WidgetBox,
   Expander,
-  MuiField,
-  validators,
   ConfigBox,
-  useAlert,
   useConfig,
+  FieldSwitch,
+  FieldSelect,
 } from '..';
 
-interface IProps {
-  config: ISystemConfig;
-}
 
 const FreqOptions = [
   [undefined, 'Default'],
@@ -34,8 +18,7 @@ const FreqOptions = [
 ];
 
 const FreqField = ({ i }: { i: number }) => (
-  <MuiField
-    look="select"
+  <FieldSelect
     fullWidth
     name={'pm.' + i}
     label={(i ? 'Min' : 'Max') + '. CPU frequency'}
@@ -45,42 +28,31 @@ const FreqField = ({ i }: { i: number }) => (
         {o[1]}
       </MenuItem>
     ))}
-  </MuiField>
+  </FieldSelect>
 );
 
-function Settings({ config }: IProps) {
-  const refreshConfig = useConfig(Name);
+export default () => {
+  const [config] = useConfig<ISystemConfig>(Name);
   if (!config) return null;
 
   return (
     <ConfigBox name={'esp32'} initial={config} title="System settings">
-      <FormikConsumer>
-        {(controller) => (
-          <>
-            <Expander title="Power management" defaultExpanded>
-              <Grid item xs>
-                <MuiField
-                  look="switch"
-                  name="pm.2"
-                  label="Use Dynamic Frequency Scaling (light sleep)"
-                />
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item xs>
-                  <FreqField i={0} />
-                </Grid>
-                <Grid item xs>
-                  <FreqField i={1} />
-                </Grid>
-              </Grid>
-            </Expander>
-          </>
-        )}
-      </FormikConsumer>
+      <Expander title="Power management" defaultExpanded>
+        <Grid item xs>
+          <FieldSwitch
+            name="pm.2"
+            label="Use Dynamic Frequency Scaling (light sleep)"
+          />
+        </Grid>
+        <Grid container spacing={3}>
+          <Grid item xs>
+            <FreqField i={0} />
+          </Grid>
+          <Grid item xs>
+            <FreqField i={1} />
+          </Grid>
+        </Grid>
+      </Expander>
     </ConfigBox>
   );
-}
-
-export default connect((state: Backend.IRootState) => ({
-  config: Backend.selectConfig<ISystemConfig>(state, 'esp32'),
-}))(Settings);
+};

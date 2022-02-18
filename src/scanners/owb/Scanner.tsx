@@ -1,21 +1,20 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormikContext, FormikConsumer } from 'formik';
-import {
-  Button,
-  Grid,
-  Typography,
-  withStyles,
-  WithStyles,
-  createStyles,
-  Theme,
-  Divider,
-} from '@material-ui/core';
+import { Button, Grid, Typography, Divider } from '@mui/material';
 
-import { MuiField, MuiForm, validators, WidgetBox, Backend } from '../..';
+import {
+  FieldText,
+  MuiForm,
+  validators,
+  WidgetBox,
+  Backend,
+  useModuleState,
+} from '../..';
 
 import { Name } from './types';
+import { styled } from '@mui/material/styles';
 
 interface IOptions {
   pin?: number;
@@ -27,104 +26,98 @@ interface IScanResponse {
 }
 
 const owbScan = (req?: IOptions) => Backend.request(Name, 'scan', req);
+const Results = styled('div')({
+  marginTop: 16,
+  padding: 16,
+  paddingTop: 8,
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: 'rgba(0, 0, 0, 0.12)',
+});
 
-const styles = (theme: Theme) =>
-  createStyles({
-    results: {
-      marginTop: 16,
-      padding: 16,
-      paddingTop: 8,
-      borderStyle: 'solid',
-      borderWidth: 1,
-      borderColor: 'rgba(0, 0, 0, 0.12)',
-    },
-    idsBox: {
-      marginTop: 10,
-    },
-    scanDiv: {
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-    },
-    scanButton: { position: 'absolute', bottom: 0, right: 0 },
-    id: {
-      textTransform: 'none',
-    },
-    resultMsg: { textAlign: 'center', width: '100%' },
-  });
+const ResultMsg = styled(Typography)({
+  textAlign: 'center',
+  width: '100%',
+});
+const IdsBox = styled(Grid)({
+  marginTop: 10,
+});
+const ScanDiv = styled('div')({
+  position: 'relative',
+  width: '100%',
+  height: '100%',
+});
+const StyledScanButton = styled(Button)({
+  position: 'absolute',
+  bottom: 0,
+  right: 0,
+});
+const IdButton = styled(Button)({
+  textTransform: 'none',
+});
 
-interface IProps {
-  state: IOptions;
-  scan: IScanResponse;
-}
 
-const ScanButton = withStyles(styles)(
-  ({ classes }: WithStyles<typeof styles>) => {
-    const { isSubmitting, submitForm } = useFormikContext();
-    return (
-      <div className={classes.scanDiv}>
-        <Button
-          variant="contained"
-          className={classes.scanButton}
-          disabled={isSubmitting}
-          onClick={submitForm}
-        >
-          Scan 1-wire bus
-        </Button>
-      </div>
-    );
-  }
-);
+const ScanButton = () => {
+  const { isSubmitting, submitForm } = useFormikContext();
+  return (
+    <ScanDiv>
+      <StyledScanButton
+        variant="contained"
+        disabled={isSubmitting}
+        onClick={submitForm}
+      >
+        Scan 1-wire bus
+      </StyledScanButton>
+    </ScanDiv>
+  );
+};
 
-const ScanResults = withStyles(styles)(
-  ({ state, scan, classes }: IProps & WithStyles<typeof styles>) => {
-    const { codes = [] } = scan;
-    const buttons = [];
-    for (let c of codes)
-      buttons.push(
-        <Grid item xs={2} key={c}>
-          <Button variant="contained" color="secondary" className={classes.id}>
-            {c}
-          </Button>
-        </Grid>
-      );
-    const content = buttons.length ? (
-      <Grid container spacing={3} wrap="wrap" className={classes.idsBox}>
-        {buttons}
+const ScanResults = ({ scan }: {scan:IScanResponse}) => {
+  const { codes = [] } = scan;
+  const buttons = [];
+  for (const c of codes)
+    buttons.push(
+      <Grid item xs={2} key={c}>
+        <IdButton variant="contained" color="secondary">
+          {c}
+        </IdButton>
       </Grid>
-    ) : (
-      <Typography variant={'subtitle1'} className={classes.resultMsg}>
-        {'No devices were detected!'}
-      </Typography>
     );
-    return (
-      <div className={classes.results}>
-        <Typography variant="subtitle1">Scan results</Typography>
-        <Divider />
-        {content}
-      </div>
-    );
-  }
-);
-
+  const content = buttons.length ? (
+    <IdsBox container spacing={3} wrap="wrap">
+      {buttons}
+    </IdsBox>
+  ) : (
+    <ResultMsg variant={'subtitle1'}>{'No devices were detected!'}</ResultMsg>
+  );
+  return (
+    <Results>
+      <Typography variant="subtitle1">Scan results</Typography>
+      <Divider />
+      {content}
+    </Results>
+  );
+};
 const ValidationSchema = Yup.object().shape({
   pin: validators.pin,
   max: Yup.number().integer().min(4).max(255),
 });
 
-function Widget(props: IProps) {
+export default () => {
   const handleSubmit = async (values: any) => {
     await owbScan(values);
   };
   React.useEffect(() => {
     Backend.requestState(Name);
   }, []);
+  const state = useModuleState<IOptions>(Name, { once: true }) || {};
+  const scan =
+    useSelector<any, IScanResponse>((state) => state.owb?.scan) || {};
   const ncp = {
     type: 'number',
     placeholder: 'auto',
     InputLabelProps: { shrink: true },
   };
-  const { state = {}, scan } = props;
   const haveResults = !!scan.codes;
 
   return (
@@ -141,24 +134,19 @@ function Widget(props: IProps) {
           >
             <Grid container spacing={3}>
               <Grid item xs>
-                <MuiField name="pin" label="Pin" componentProps={ncp} />
+                <FieldText name="pin" label="Pin" {...ncp} />
               </Grid>
               <Grid item xs>
-                <MuiField name="max" label="Max devices" componentProps={ncp} />
+                <FieldText name="max" label="Max devices" {...ncp} />
               </Grid>
               <Grid item xs>
                 <ScanButton />
               </Grid>
             </Grid>
-            {haveResults && <ScanResults {...props} />}
+            {haveResults && <ScanResults scan={scan} />}
           </WidgetBox>
         )}
       </FormikConsumer>
     </MuiForm>
   );
-}
-
-export default connect((state: any) => ({
-  state: Backend.selectState<IOptions>(state, Name),
-  scan: state.owb?.scan || {},
-}))(Widget);
+};

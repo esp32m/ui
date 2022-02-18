@@ -1,5 +1,5 @@
 import { useDevices } from '../shared';
-import { Plugins } from '../../plugins';
+import { registerPlugin } from '../../plugins';
 import Content from './Content';
 
 export const useMicrowaveMotionSensor = (
@@ -7,7 +7,7 @@ export const useMicrowaveMotionSensor = (
   title = 'Microwave motion sensor'
 ): void => {
   useDevices();
-  Plugins.register({
+  registerPlugin({
     name,
     device: { component: Content, props: { name, title } },
   });

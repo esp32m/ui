@@ -1,12 +1,12 @@
-import { DevicesOther } from '@material-ui/icons';
-import { once } from 'lodash';
+import { DevicesOther } from '@mui/icons-material';
+import { once } from 'lodash-es';
 
-import { Plugins } from '../plugins';
+import { registerPlugin } from '../plugins';
 
 import Content from './Content';
 
 export const useDevices = once(() => {
-  Plugins.register({
+  registerPlugin({
     name: 'devices',
     content: { title: 'Devices', icon: DevicesOther, component: Content },
   });

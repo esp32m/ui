@@ -1,17 +1,12 @@
-import React, { useEffect, CSSProperties, useState } from 'react';
-import { connect } from 'react-redux';
+import  { useEffect,  useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
-  StyledComponentProps,
-  Theme,
-  createStyles,
-  makeStyles,
-  WithStyles,
-} from '@material-ui/core';
+ } from '@mui/material';
 
 import * as Backend from '../backend';
 import { useModuleState } from '../app';
@@ -19,35 +14,28 @@ import {
   Name,
   IWifiState,
   ScanEntries,
-  WifiStatus,
   WifiAuth,
   IRootState,
 } from './types';
 import { requestConnect, requestScan, select } from './utils';
 import SignalIcon from './SignalIcon';
 import ConnectDialog, { IProps as IConnectDialogProps } from './ConnectDialog';
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor:
-          theme.palette.type === 'light'
-            ? 'rgba(0, 0, 0, 0.07)' // grey[200]
-            : 'rgba(255, 255, 255, 0.14)',
-      },
-    },
-    connected: { fontWeight: 600 },
-  })
-);
 
-interface IProps {
-  scan: ScanEntries;
-  state: IWifiState;
-}
 
-const ScanList = ({ scan, state }: IProps) => {
+const StyledListItem = styled(ListItem)(({theme})=>({
+  cursor: 'pointer',
+  '&:hover': {
+    backgroundColor:
+      theme.palette.mode === 'light'
+        ? 'rgba(0, 0, 0, 0.07)' // grey[200]
+        : 'rgba(255, 255, 255, 0.14)',
+  }
+}));
+
+
+export default () => {
   useEffect(() => {
     const to = window.setTimeout(() => Backend.request(Name, 'scan'), 1000); // hack - do scan a bit later to allow for other ws requests to pass through on page load
     const interval = window.setInterval(requestScan, 30000);
@@ -56,8 +44,8 @@ const ScanList = ({ scan, state }: IProps) => {
       window.clearTimeout(to);
     };
   }, []);
-  useModuleState(Name);
-  const classes = useStyles();
+  const state=useModuleState<IWifiState>(Name);
+  const scan=useSelector<IRootState, ScanEntries>(state=>select(state)?.scan);
   const [dialogProps, setDialogProps] = useState<IConnectDialogProps>({
     open: false,
     ssid: '',
@@ -76,8 +64,7 @@ const ScanList = ({ scan, state }: IProps) => {
     else requestConnect(ssid, bssid);
   }
 
-  const { sta, status } = state || {};
-  const scanning = !scan || !!(status & WifiStatus.Scanning);
+  const { sta } = state || {};
   let scanTable;
   if (scan)
     scanTable = (
@@ -85,22 +72,21 @@ const ScanList = ({ scan, state }: IProps) => {
         {scan.map((r, i) => {
           const [ssid, auth, rssi, ch, bssid] = r;
           const c =
-            sta && ssid && bssid == sta.bssid ? classes.connected : undefined;
+            sta && ssid && bssid == sta.bssid ? { fontWeight: 600 } : {};
           return (
-            <ListItem
-              className={classes.root}
+            <StyledListItem
               key={'row' + i}
               onClick={() => handleClick(ssid, bssid, auth)}
             >
               <ListItemText
-                classes={{ primary: c, secondary: c }}
+                style={c}
                 primary={ssid || '[hidden]'}
                 secondary={bssid}
               />
               <ListItemIcon>
                 <SignalIcon {...{ rssi, auth, ch, bssid }} />
               </ListItemIcon>
-            </ListItem>
+            </StyledListItem>
           );
         })}
       </List>
@@ -113,9 +99,4 @@ const ScanList = ({ scan, state }: IProps) => {
   );
 };
 
-export const UnconnectedScanList = ScanList;
 
-export default connect((state: IRootState) => ({
-  state: Backend.selectState<IWifiState>(state, Name),
-  scan: select(state)?.scan,
-}))(UnconnectedScanList);

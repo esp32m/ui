@@ -11,8 +11,8 @@ import {
   SignalWifi3BarLock,
   SignalWifi4Bar,
   SignalWifi4BarLock,
-} from '@material-ui/icons';
-import { Tooltip } from '@material-ui/core';
+} from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 const iconsN = [
   SignalWifi0Bar,
@@ -46,7 +46,7 @@ const AuthNames = [
 ];
 
 export default function ({ rssi, auth, ch }: IProps) {
-  let I: React.ComponentType = (auth ? iconsL : iconsN)[rssiToLevel(rssi, 5)];
+  const I: React.ComponentType = (auth ? iconsL : iconsN)[rssiToLevel(rssi, 5)];
   const tt = (
     <>
       <div>{'signal: ' + rssiToStr(rssi)}</div>

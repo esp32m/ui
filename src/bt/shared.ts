@@ -1,12 +1,12 @@
-import { Bluetooth } from '@material-ui/icons';
+import { Bluetooth } from '@mui/icons-material';
 
-import { Plugins } from '..';
+import { registerPlugin } from '..';
 
 import Content from './Content';
-import once from 'lodash/once';
+import { once } from 'lodash-es';
 
 export const useBt = once(() => {
-  Plugins.register({
+  registerPlugin({
     name: 'bt',
     content: { title: 'Bluetooth', icon: Bluetooth, component: Content },
   });

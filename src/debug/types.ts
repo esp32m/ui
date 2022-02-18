@@ -2,7 +2,7 @@ import React from 'react';
 import { IPlugin } from '../plugins';
 
 export interface IDebugPlugin extends IPlugin {
-  debug?: {
+  debug: {
     content: React.ComponentType;
     props?: React.Attributes;
   };

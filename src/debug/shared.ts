@@ -1,12 +1,12 @@
-import { BugReport } from '@material-ui/icons';
-import { once } from 'lodash';
+import { BugReport } from '@mui/icons-material';
+import { once } from 'lodash-es';
 
-import { Plugins } from '../plugins';
+import { registerPlugin } from '../plugins';
 
 import Content from './Content';
 
 export const useDebug = once(() => {
-  Plugins.register({
+  registerPlugin({
     name: 'debug',
     content: { title: 'Debug', icon: BugReport, component: Content },
   });

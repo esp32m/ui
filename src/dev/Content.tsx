@@ -1,11 +1,11 @@
 import React from 'react';
-import { Plugins } from '..';
-import { Grid } from '@material-ui/core';
+import { usePlugins } from '..';
+import { Grid } from '@mui/material';
 import { IDevicePlugin } from './types';
 
 export default function Content(): JSX.Element {
   const widgets: Array<React.ReactElement> = [];
-  const plugins = Plugins.all();
+  const plugins = usePlugins();
   plugins.forEach((p, i) => {
     const dp = p as IDevicePlugin;
     if (dp.device?.component)

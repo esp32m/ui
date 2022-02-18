@@ -1,20 +1,21 @@
 import React from 'react';
-import { Plugins } from '..';
-import { Grid } from '@material-ui/core';
+import { usePlugins, IPlugin } from '..';
+import { Grid } from '@mui/material';
+interface IBtPlugin extends IPlugin {
+  bt: { content: React.ComponentType; props: unknown };
+}
 
 export default function Content(): JSX.Element {
-  const widgets: Array<React.ReactElement> = [];
-  const plugins = Plugins.all();
-  plugins.forEach((p, i) => {
-    const bt = p.bt as { content: React.ComponentType; props: unknown };
-    if (bt?.content)
-      widgets.push(
+  const plugins = usePlugins<IBtPlugin>();
+  const widgets: Array<React.ReactElement> = React.useMemo(() => {
+    return plugins
+      .filter((p) => !!p.bt?.content)
+      .map(({ bt }, i) =>
         React.createElement(
           bt.content,
           Object.assign({ key: 'bt' + i }, bt.props)
         )
       );
-  });
-
+  }, [plugins]);
   return <Grid container>{widgets}</Grid>;
 }

@@ -1,7 +1,3 @@
-import React from 'react';
-import { connect } from 'react-redux';
-
-import * as Backend from '../backend';
 import {
   WidgetBox,
   NameValueList,
@@ -9,23 +5,19 @@ import {
   useModuleState,
   millisToStr,
   buildInfo,
-} from '../app';
+} from '..';
 
 import { IAppState } from './types';
 
 const Name = 'app';
-
-interface IProps {
-  state: IAppState;
-}
 
 function sdkver(version: string | number) {
   if (typeof version !== 'number') return version;
   return `${(version >> 16) & 0xff}.${(version >> 8) & 0xff}.${version & 0xff}`;
 }
 
-function Summary({ state }: IProps) {
-  useModuleState(Name);
+export default () => {
+  const state = useModuleState<IAppState>(Name);
   const { name, time, uptime, built, version, sdk, size } = state || {};
   const list = [];
   if (name) list.push(['Application name', name]);
@@ -47,8 +39,4 @@ function Summary({ state }: IProps) {
       <NameValueList list={list} />
     </WidgetBox>
   );
-}
-
-export default connect((state: Backend.IRootState) => ({
-  state: Backend.selectState<IAppState>(state, Name),
-}))(Summary);
+};

@@ -1,4 +1,4 @@
-import { IPlugin, Plugins } from './plugins';
+import { IPlugin, usePlugins, registerPlugin } from '.';
 
 export const enum ErrType {}
 
@@ -14,7 +14,7 @@ interface IEspErrorMap {
 }
 
 interface IEspErrorsPlugin extends IPlugin {
-  errors?: IEspErrorMap;
+  errors: IEspErrorMap;
 }
 
 const errors: IEspErrorMap = {
@@ -40,14 +40,11 @@ function codeToError(code: number): IEspError {
       return { code, name: 'ESP_OK' };
     default: {
       let e: EspErrorMapEntry | undefined;
-      for (const p of Plugins.all()) {
-        const ep = p as IEspErrorsPlugin;
-        if (ep.errors) {
-          const f = ep.errors[code];
-          if (f) {
-            e = f;
-            break;
-          }
+      for (const p of usePlugins<IEspErrorsPlugin>((p) => !!p.errors)) {
+        const f = p.errors[code];
+        if (f) {
+          e = f;
+          break;
         }
       }
       switch (typeof e) {
@@ -81,4 +78,4 @@ export const formatError = (a: unknown): string | undefined => {
   }
 };
 
-Plugins.register({ name: 'esp_err', errors });
+registerPlugin({ name: 'esp_err', errors });

@@ -1,10 +1,6 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Switch } from '@material-ui/core';
-import { IState, IMultiProps } from './types';
+import { IMultiProps } from './types';
 import Hbridge from './Hbridge';
-import * as Backend from '../../backend';
-import { WidgetBox, NameValueList, useModuleState } from '../../app';
+import { WidgetBox } from '../..';
 
 export default ({ nameOrList, title }: IMultiProps) => {
   const list = [];

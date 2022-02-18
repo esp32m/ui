@@ -1,15 +1,15 @@
 import React from 'react';
-import { FormikConfig, FormikValues } from 'formik';
-import { Save } from '@material-ui/icons';
-import { makeStyles, IconButton, Tooltip } from '@material-ui/core';
 import { diff } from 'deep-object-diff';
+import { FormikConfig, FormikValues } from 'formik';
+import { Save } from '@mui/icons-material';
+import { IconButton, Tooltip } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 import { MuiForm, WidgetBox, Backend } from '..';
+import { useSelector } from 'react-redux';
 
-const useStyles = makeStyles({
-  icon: {
-    padding: 8,
-  },
+const StyledIconButton = styled(IconButton)({
+  padding: 8,
 });
 
 interface IProps extends Partial<FormikConfig<FormikValues>> {
@@ -26,18 +26,17 @@ interface IFormProps extends Partial<FormikConfig<FormikValues>> {
 export function Form(props: React.PropsWithChildren<IFormProps>) {
   const handleSubmit = async (values: FormikValues) => {
     const v = diff(props.initial, values);
-    await Backend.setConfig(props.name, v);
+    await Backend.setConfig(name, v);
   };
   const { name, children, ...other } = props;
   const fp = {
     onSubmit: handleSubmit,
     ...other,
   };
-  return <MuiForm {...fp}>{props.children}</MuiForm>;
+  return <MuiForm {...fp}>{children}</MuiForm>;
 }
 
 export const Box = (props: React.PropsWithChildren<IProps>) => {
-  const classes = useStyles();
   const { title, children, ...other } = props;
   return (
     <Form {...other}>
@@ -48,13 +47,12 @@ export const Box = (props: React.PropsWithChildren<IProps>) => {
           action={
             controller.dirty ? (
               <Tooltip title="save changes">
-                <IconButton
-                  className={classes.icon}
+                <StyledIconButton
                   aria-label="save settings"
                   onClick={controller.submitForm}
                 >
                   <Save />
-                </IconButton>
+                </StyledIconButton>
               </Tooltip>
             ) : undefined
           }
@@ -66,10 +64,13 @@ export const Box = (props: React.PropsWithChildren<IProps>) => {
   );
 };
 
-export function useConfig(name: string) {
+export function useModuleConfig<T = unknown>(name: string): [T, () => void] {
   const [gen, setGen] = React.useState(0);
   React.useEffect(() => {
     Backend.requestConfig(name);
   }, [gen]);
-  return () => setGen(gen + 1);
+  const config = useSelector<Backend.IRootState, T>((state) =>
+    Backend.selectConfig<T>(state, name)
+  );
+  return [config, () => setGen(gen + 1)];
 }

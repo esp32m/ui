@@ -1,16 +1,17 @@
 import React, { useMemo } from 'react';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { FormikProps } from 'formik';
 import * as Yup from 'yup';
 
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   PinConfig,
   PinMode,
@@ -25,9 +26,8 @@ import {
   PcntCountMode,
   TouchTieOpt,
 } from './types';
-import { Backend, MuiField, MuiForm } from '../..';
+import { Backend, FieldText, MuiForm, FieldSelect } from '../..';
 import { LedcModes, LedcTimers, toMenuItem } from './tools';
-import { Alert } from '@material-ui/lab';
 
 const PinModes = [
   [PinMode.Undefined, 'Undefined'],
@@ -350,15 +350,14 @@ const DigitalForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={6}>
-        <MuiField look="select" name="digital.mode" label="I/O mode" fullWidth>
+        <FieldSelect name="digital.mode" label="I/O mode" fullWidth>
           {GpioModes.filter(
             (m) => m[0] < GpioMode.Output || !isInputOnly(pin)
           ).map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="digital.pull"
           label="Pull resistors"
           fullWidth
@@ -366,7 +365,7 @@ const DigitalForm = (props: ISubformProps) => {
           {PullModes.filter(
             (m) => m[0] == PullMode.Floating || !isInputOnly(pin)
           ).map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
     </>
   );
@@ -384,9 +383,9 @@ const AdcForm = (props: ISubformProps) => {
         </Grid>
       )}
       <Grid item xs={12}>
-        <MuiField look="select" name="adc.atten" label="Attenuation" fullWidth>
+        <FieldSelect name="adc.atten" label="Attenuation" fullWidth>
           {AdcAttens.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
     </>
   );
@@ -396,7 +395,7 @@ const DacForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={12}>
-        <MuiField name="dac.voltage" label="Voltage" fullWidth />
+        <FieldText name="dac.voltage" label="Voltage" fullWidth />
       </Grid>
     </>
   );
@@ -406,20 +405,20 @@ const CwForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={6}>
-        <MuiField look="select" name="cw.scale" label="Amplitude" fullWidth>
+        <FieldSelect name="cw.scale" label="Amplitude" fullWidth>
           {CwScales.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField look="select" name="cw.phase" label="Phase shift" fullWidth>
+        <FieldSelect name="cw.phase" label="Phase shift" fullWidth>
           {CwPhases.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField name="cw.offset" label="Offset" fullWidth />
+        <FieldText name="cw.offset" label="Offset" fullWidth />
       </Grid>
       <Grid item xs={6}>
-        <MuiField name="cw.freq" label="Frequency" fullWidth />
+        <FieldText name="cw.freq" label="Frequency" fullWidth />
       </Grid>
     </>
   );
@@ -429,8 +428,7 @@ const LedcForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="ledc.channel"
           label="LEDC channel"
           fullWidth
@@ -438,33 +436,32 @@ const LedcForm = (props: ISubformProps) => {
           {Array.from(Array(8).keys())
             .map((v) => [v, 'Channel #' + v])
             .map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={3}>
-        <MuiField look="select" name="ledc.mode" label="LEDC mode" fullWidth>
+        <FieldSelect name="ledc.mode" label="LEDC mode" fullWidth>
           {LedcModes.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={3}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="ledc.intr"
           label="Fade interrupt"
           fullWidth
         >
           {LedcIntrs.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField look="select" name="ledc.timer" label="LEDC timer" fullWidth>
+        <FieldSelect name="ledc.timer" label="LEDC timer" fullWidth>
           {LedcTimers}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={3}>
-        <MuiField name="ledc.duty" label="Duty" fullWidth />
+        <FieldText name="ledc.duty" label="Duty" fullWidth />
       </Grid>
       <Grid item xs={3}>
-        <MuiField name="ledc.hpoint" label="Hpoint value" fullWidth />
+        <FieldText name="ledc.hpoint" label="Hpoint value" fullWidth />
       </Grid>
     </>
   );
@@ -474,8 +471,7 @@ const SdForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="sd.channel"
           label="Sigma-delta channel"
           fullWidth
@@ -483,13 +479,13 @@ const SdForm = (props: ISubformProps) => {
           {Array.from(Array(8).keys())
             .map((v) => [v, 'Channel #' + v])
             .map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={3}>
-        <MuiField name="sd.duty" label="Duty" fullWidth />
+        <FieldText name="sd.duty" label="Duty" fullWidth />
       </Grid>
       <Grid item xs={3}>
-        <MuiField name="sd.prescale" label="Prescale" fullWidth />
+        <FieldText name="sd.prescale" label="Prescale" fullWidth />
       </Grid>
     </>
   );
@@ -499,8 +495,7 @@ const PcntForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="pc.unit"
           label="Pulse counter unit"
           fullWidth
@@ -508,11 +503,10 @@ const PcntForm = (props: ISubformProps) => {
           {Array.from(Array(8).keys())
             .map((v) => [v, 'Unit #' + v])
             .map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="pc.channel"
           label="Pulse counter channel"
           fullWidth
@@ -520,36 +514,34 @@ const PcntForm = (props: ISubformProps) => {
           {Array.from(Array(2).keys())
             .map((v) => [v, 'Channel #' + v])
             .map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="pc.pmode"
           label="Positive edge count mode"
           fullWidth
         >
           {PcntCountModes.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={6}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="pc.nmode"
           label="Negative edge count mode"
           fullWidth
         >
           {PcntCountModes.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
       <Grid item xs={4}>
-        <MuiField name="pc.hlim" label="Max. value" fullWidth />
+        <FieldText name="pc.hlim" label="Max. value" fullWidth />
       </Grid>
       <Grid item xs={4}>
-        <MuiField name="pc.llim" label="Min. value" fullWidth />
+        <FieldText name="pc.llim" label="Min. value" fullWidth />
       </Grid>
       <Grid item xs={4}>
-        <MuiField name="pc.filter" label="Filter" fullWidth />
+        <FieldText name="pc.filter" label="Filter" fullWidth />
       </Grid>
     </>
   );
@@ -559,20 +551,19 @@ const TouchForm = (props: ISubformProps) => {
   return (
     <>
       <Grid item xs={4}>
-        <MuiField name="touch.threshold" label="Threshold" fullWidth />
+        <FieldText name="touch.threshold" label="Threshold" fullWidth />
       </Grid>
       <Grid item xs={4}>
-        <MuiField name="touch.slope" label="Charge/discharge speed" fullWidth />
+        <FieldText name="touch.slope" label="Charge/discharge speed" fullWidth />
       </Grid>
       <Grid item xs={4}>
-        <MuiField
-          look="select"
+        <FieldSelect
           name="touch.tie"
           label="Initial charge"
           fullWidth
         >
           {TouchTieOpts.map(toMenuItem)}
-        </MuiField>
+        </FieldSelect>
       </Grid>
     </>
   );
@@ -651,8 +642,7 @@ const PinConfigForm = (props: {
             <DialogContent style={{ width: 480 }} dividers>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
-                  <MuiField
-                    look="select"
+                  <FieldSelect
                     name="mode"
                     label="Pin mode"
                     fullWidth
@@ -660,7 +650,7 @@ const PinConfigForm = (props: {
                     {PinModes.filter((m) =>
                       isValidMode(pin, m[0] as PinMode)
                     ).map(toMenuItem)}
-                  </MuiField>
+                  </FieldSelect>
                 </Grid>
                 {SubForm && <SubForm pin={pin} />}
               </Grid>

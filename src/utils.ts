@@ -1,3 +1,6 @@
+import { isNumber } from 'lodash';
+import { IStaticConfig } from './types';
+
 export const rssiToStr = (rssi: number): string =>
   `${rssi} dBm (${Math.min(Math.round(2 * (rssi + 100)), 100)}%)`;
 
@@ -14,3 +17,12 @@ export const rssiToLevel = (rssi: number, numLevels: number): number => {
     return Math.trunc(((rssi - MIN_RSSI) * outputRange) / inputRange);
   }
 };
+
+export const isFiniteNumber = (value: unknown) =>
+  isNumber(value) && isFinite(value);
+
+const _staticConfig: IStaticConfig = {};
+
+export const useStaticConfig = (key: string) => _staticConfig[key];
+export const setStaticConfig = (key: string, value: unknown) =>
+  ((_staticConfig as Record<string, unknown>)[key] = value);

@@ -1,19 +1,10 @@
-import React from 'react';
-import { connect } from 'react-redux';
-
-import * as Backend from '../backend';
 import { WidgetBox, NameValueList, useModuleState } from '..';
 
 import { Name, IMqttState } from './types';
 
-interface IProps {
-  state: IMqttState;
-}
 
-export default connect((state: Backend.IRootState) => ({
-  state: Backend.selectState<IMqttState>(state, Name),
-}))(({ state }: IProps) => {
-  useModuleState(Name);
+export default () => {
+  const state=useModuleState<IMqttState>(Name);
   if (!state) return null;
   const { ready, uri, client, pubcnt, cmdcnt } = state;
   const list = [];
@@ -27,4 +18,4 @@ export default connect((state: Backend.IRootState) => ({
       <NameValueList list={list} />
     </WidgetBox>
   );
-});
+};

@@ -1,13 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { Name, States, IProps, IProbe } from './types';
-import * as Backend from '../../backend';
-import { WidgetBox, NameValueList, useModuleState } from '../../app';
+import { WidgetBox, NameValueList, useModuleState } from '../..';
 
-export default connect((state: any) => ({
-  state: Backend.selectState<States>(state, Name),
-}))(({ state, probes, title }: { state: States } & IProps) => {
-  useModuleState(Name);
+export default ({ probes, title }: IProps) => {
+  const state = useModuleState<States>(Name);
   if (!state || !state.length) return null;
   const list = [];
   let label;
@@ -33,9 +28,11 @@ export default connect((state: any) => ({
 
   return (
     <WidgetBox
-      title={'Dallas temperature sensor' + (list.length > 1 ? 's' : '')}
+      title={
+        title || 'Dallas temperature sensor' + (list.length > 1 ? 's' : '')
+      }
     >
       <NameValueList list={list} />
     </WidgetBox>
   );
-});
+};

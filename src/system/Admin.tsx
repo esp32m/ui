@@ -1,14 +1,14 @@
 import React from 'react';
 
 import * as Backend from '../backend';
-import { WidgetBox, useMessageBox, MessageBox } from '../app';
+import { WidgetBox, useMessageBox, MessageBox } from '..';
 import {
   Button,
   TextField,
   InputAdornment,
   Grid,
-  makeStyles,
-} from '@material-ui/core';
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const Name = 'app';
 const requestRestart = () =>
@@ -18,11 +18,8 @@ const requestReset = () =>
 const requestUpdate = (url: string) =>
   Backend.request('ota', 'update', { url });
 
-const useStyles = makeStyles({
-  updateContainer: { position: 'relative' },
-  updateButton: { bottom: 0, right: 0, position: 'absolute' },
-  buttonBar: { marginTop: 48 },
-});
+const UpdateButton=styled(Button)({ bottom: 0, right: 0, position: 'absolute' });
+const ButtonBar=styled(Grid)({ marginTop: 48 });
 
 export default () => {
   const [fwurl, setFwurl] = React.useState<string>('');
@@ -40,7 +37,6 @@ export default () => {
       actions: [{ name: 'yes', onClick: () => requestUpdate(fwurl) }, 'no'],
     },
   });
-  const classes = useStyles();
   React.useEffect(() => {
     Backend.requestConfig('ota').then((s) => {
       if (s.data?.url) setFwurl(s.data?.url);
@@ -52,29 +48,28 @@ export default () => {
         <Grid item xs>
           <TextField
             fullWidth
+            variant="standard"
             label="Firmware URL"
             value={fwurl}
             onChange={(e) => setFwurl(e.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <Button
-                    className={classes.updateButton}
+                  <UpdateButton
                     onClick={() => open('update')}
                     disabled={!fwurl}
                   >
                     Update
-                  </Button>
+                  </UpdateButton>
                 </InputAdornment>
               ),
             }}
           />
         </Grid>
       </Grid>
-      <Grid
+      <ButtonBar
         container
-        justify="flex-end"
-        className={classes.buttonBar}
+        justifyContent="flex-end"
         spacing={4}
       >
         <Grid item>
@@ -83,7 +78,7 @@ export default () => {
         <Grid item>
           <Button onClick={() => open('reset')}>Reset settings</Button>
         </Grid>
-      </Grid>
+      </ButtonBar>
       <MessageBox {...messageBoxProps} />
     </WidgetBox>
   );

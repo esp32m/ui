@@ -1,0 +1,1 @@
+export type IStaticConfig = Record<string, unknown>;

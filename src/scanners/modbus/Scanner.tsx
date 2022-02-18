@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { useFormikContext, FormikConsumer } from 'formik';
 import {
@@ -7,19 +7,15 @@ import {
   Grid,
   MenuItem,
   Typography,
-  withStyles,
-  WithStyles,
-  createStyles,
-  Theme,
   Divider,
   Tabs,
   Tab,
   Box,
   Paper,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import {
-  MuiField,
+  FieldText,
   MuiForm,
   validators,
   WidgetBox,
@@ -27,9 +23,12 @@ import {
   Alert,
   useAlert,
   useConfig,
+  FieldSelect,
+  FieldAutocomplete,
 } from '../..';
 
 import { Name } from './types';
+import { styled } from '@mui/material/styles';
 
 interface IOptions {
   from?: number;
@@ -43,98 +42,87 @@ interface IScanResponse {
 
 const reqScan = (req?: IOptions) => Backend.request(Name, 'scan', req);
 const reqRequest = (req?: IOptions) => Backend.request(Name, 'request', req);
-const reqMonitor = (req?: IOptions) => Backend.request(Name, 'monitor', req);
+const Results = styled('div')({
+  marginTop: 16,
+  padding: 16,
+  paddingTop: 8,
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: 'rgba(0, 0, 0, 0.12)',
+});
 
-const styles = (theme: Theme) =>
-  createStyles({
-    results: {
-      marginTop: 16,
-      padding: 16,
-      paddingTop: 8,
-      borderStyle: 'solid',
-      borderWidth: 1,
-      borderColor: 'rgba(0, 0, 0, 0.12)',
-    },
-    idsBox: {
-      marginTop: 10,
-    },
-    scanDiv: {
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-    },
-    scanButton: { position: 'absolute', bottom: 0, right: 0 },
-    id: {
-      textTransform: 'none',
-    },
-    resultMsg: {
-      textAlign: 'center',
-      width: '100%',
-    },
-  });
-
+const ResultMsg = styled(Typography)({
+  textAlign: 'center',
+  width: '100%',
+});
+const IdsBox = styled(Grid)({
+  marginTop: 10,
+});
+const ScanDiv = styled('div')({
+  position: 'relative',
+  width: '100%',
+  height: '100%',
+});
+const StyledScanButton = styled(Button)({
+  position: 'absolute',
+  bottom: 0,
+  right: 0,
+});
+const IdButton = styled(Button)({
+  textTransform: 'none',
+});
+interface IModbusResponse {
+  scan?: IScanResponse;
+  request?: any;
+}
 interface IProps {
   state: IOptions;
-  resp: {
-    scan?: IScanResponse;
-    request?: any;
-  };
+  resp: IModbusResponse;
 }
 
-const SubmitButton = withStyles(styles)(
-  ({ classes, label }: WithStyles<typeof styles> & { label: string }) => {
-    const { isSubmitting, submitForm } = useFormikContext();
-    return (
-      <div className={classes.scanDiv}>
-        <Button
-          variant="contained"
-          className={classes.scanButton}
-          disabled={isSubmitting}
-          onClick={submitForm}
-        >
-          {label}
-        </Button>
-      </div>
-    );
-  }
-);
+const SubmitButton = ({ label }: { label: string }) => {
+  const { isSubmitting, submitForm } = useFormikContext();
+  return (
+    <ScanDiv>
+      <StyledScanButton
+        variant="contained"
+        disabled={isSubmitting}
+        onClick={submitForm}
+      >
+        {label}
+      </StyledScanButton>
+    </ScanDiv>
+  );
+};
 
-const ScanResults = withStyles(styles)(
-  ({ state, resp, classes }: IProps & WithStyles<typeof styles>) => {
-    const { from = 1, to = 247 } = state;
-    const { addrs = [] } = resp?.scan || {};
-    const buttons = [];
-    for (let i = from; i <= to; i++)
-      if (addrs[i >> 3] & (1 << (i & 7)))
-        buttons.push(
-          <Grid item xs={2} key={i}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.id}
-            >
-              0x{i.toString(16)}
-            </Button>
-          </Grid>
-        );
-    const content = buttons.length ? (
-      <Grid container spacing={3} wrap="wrap" className={classes.idsBox}>
-        {buttons}
-      </Grid>
-    ) : (
-      <Typography variant={'subtitle1'} className={classes.resultMsg}>
-        {'No devices were detected!'}
-      </Typography>
-    );
-    return (
-      <div className={classes.results}>
-        <Typography variant="subtitle1">Scan results</Typography>
-        <Divider />
-        {content}
-      </div>
-    );
-  }
-);
+const ScanResults = ({ state, resp }: IProps) => {
+  const { from = 1, to = 247 } = state;
+  const { addrs = [] } = resp?.scan || {};
+  const buttons = [];
+  for (let i = from; i <= to; i++)
+    if (addrs[i >> 3] & (1 << (i & 7)))
+      buttons.push(
+        <Grid item xs={2} key={i}>
+          <IdButton variant="contained" color="secondary">
+            0x{i.toString(16)}
+          </IdButton>
+        </Grid>
+      );
+  const content = buttons.length ? (
+    <IdsBox container spacing={3} wrap="wrap">
+      {buttons}
+    </IdsBox>
+  ) : (
+    <ResultMsg variant={'subtitle1'}>{'No devices were detected!'}</ResultMsg>
+  );
+  return (
+    <Results>
+      <Typography variant="subtitle1">Scan results</Typography>
+      <Divider />
+      {content}
+    </Results>
+  );
+};
 
 function TabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -158,10 +146,10 @@ const ValidationSchema = Yup.object().shape({
   addr: validators.modbusAddr,
 });
 
-function Widget(props: IProps) {
+export default () => {
   const [tab, setTab] = useState(0);
   const { check, alertProps } = useAlert();
-  const refreshConfig = useConfig(Name);
+  const [state = {}, refreshConfig] = useConfig<IOptions>(Name);
 
   const handleSubmit = async (values: any) => {
     switch (tab) {
@@ -181,8 +169,8 @@ function Widget(props: IProps) {
     InputLabelProps: { shrink: true },
     fullWidth: true,
   };
-  const { state = {}, resp = {} } = props;
-  const { scan, request } = resp;
+  const resp = useSelector<any, IModbusResponse>((state) => state.modbus) || {};
+  const { scan } = resp;
   return (
     <MuiForm
       initial={state}
@@ -198,34 +186,23 @@ function Widget(props: IProps) {
             >
               <Grid container spacing={3}>
                 <Grid item xs>
-                  <MuiField
-                    look="select"
-                    name="mode"
-                    label="RS485 mode"
-                    componentProps={ncp}
-                  >
+                  <FieldSelect name="mode" label="RS485 mode" {...ncp}>
                     <MenuItem value="rtu">RTU</MenuItem>
                     <MenuItem value="ascii">ASCII</MenuItem>
-                  </MuiField>
+                  </FieldSelect>
                 </Grid>
                 <Grid item xs>
-                  <MuiField
-                    look="select"
-                    name="uart"
-                    label="UART number"
-                    componentProps={ncp}
-                  >
+                  <FieldSelect name="uart" label="UART number" {...ncp}>
                     <MenuItem value={0}>UART 0</MenuItem>
                     <MenuItem value={1}>UART 1</MenuItem>
                     <MenuItem value={2}>UART 2</MenuItem>
-                  </MuiField>
+                  </FieldSelect>
                 </Grid>
                 <Grid item xs>
-                  <MuiField
-                    look="autocomplete"
+                  <FieldAutocomplete
                     name="baud"
                     label="Baud rate"
-                    componentProps={ncp}
+                    {...ncp}
                     autocompleteProps={{
                       freeSolo: true,
                       options: [
@@ -236,16 +213,11 @@ function Widget(props: IProps) {
                   />
                 </Grid>
                 <Grid item xs>
-                  <MuiField
-                    look="select"
-                    name="parity"
-                    label="Parity"
-                    componentProps={ncp}
-                  >
+                  <FieldSelect name="parity" label="Parity" {...ncp}>
                     <MenuItem value={0}>Disable</MenuItem>
                     <MenuItem value={2}>Even</MenuItem>
                     <MenuItem value={3}>Odd</MenuItem>
-                  </MuiField>
+                  </FieldSelect>
                 </Grid>
               </Grid>
               <div style={{ marginTop: 20 }} />
@@ -262,38 +234,25 @@ function Widget(props: IProps) {
                 <TabPanel value={tab} index={0}>
                   <Grid container spacing={3}>
                     <Grid item xs>
-                      <MuiField
-                        name="from"
-                        label="From ID"
-                        componentProps={ncp}
-                      />
+                      <FieldText name="from" label="From ID" {...ncp} />
                     </Grid>
                     <Grid item xs>
-                      <MuiField name="to" label="To ID" componentProps={ncp} />
+                      <FieldText name="to" label="To ID" {...ncp} />
                     </Grid>
                     <Grid item xs>
                       <SubmitButton label="Scan MODBUS" />
                     </Grid>
                   </Grid>
                   <Alert {...alertProps} />
-                  {!!scan?.addrs && <ScanResults {...props} />}
+                  {!!scan?.addrs && <ScanResults state={state} resp={resp} />}
                 </TabPanel>
                 <TabPanel value={tab} index={1}>
                   <Grid container spacing={3}>
                     <Grid item xs>
-                      <MuiField
-                        name="addr"
-                        label="Address"
-                        componentProps={ncp}
-                      />
+                      <FieldText name="addr" label="Address" {...ncp} />
                     </Grid>
                     <Grid item xs>
-                      <MuiField
-                        look="select"
-                        name="cmd"
-                        label="Command"
-                        componentProps={ncp}
-                      >
+                      <FieldSelect name="cmd" label="Command" {...ncp}>
                         <MenuItem value={1}>Read Coils</MenuItem>
                         <MenuItem value={2}>Read DiscreteInputs</MenuItem>
                         <MenuItem value={3}>Read Holding Registers</MenuItem>
@@ -308,26 +267,18 @@ function Widget(props: IProps) {
                         <MenuItem value={15}>
                           Write Multiple Holding Registers
                         </MenuItem>
-                      </MuiField>
+                      </FieldSelect>
                     </Grid>
                   </Grid>
                   <Grid container spacing={3}>
                     <Grid item xs>
-                      <MuiField
-                        name="regs"
-                        label="Start reg"
-                        componentProps={ncp}
-                      />
+                      <FieldText name="regs" label="Start reg" {...ncp} />
                     </Grid>
                     <Grid item xs>
-                      <MuiField
-                        name="regc"
-                        label="Reg count"
-                        componentProps={ncp}
-                      />
+                      <FieldText name="regc" label="Reg count" {...ncp} />
                     </Grid>
                     <Grid item xs>
-                      <MuiField name="v" label="Value" componentProps={ncp} />
+                      <FieldText name="v" label="Value" {...ncp} />
                     </Grid>
                     <Grid item xs>
                       <SubmitButton label="Run request" />
@@ -342,9 +293,4 @@ function Widget(props: IProps) {
       </FormikConsumer>
     </MuiForm>
   );
-}
-
-export default connect((state: any) => ({
-  state: Backend.selectConfig<IOptions>(state, Name),
-  resp: state.modbus || {},
-}))(Widget);
+};

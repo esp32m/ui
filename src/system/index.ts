@@ -1,11 +1,11 @@
-import { Plugins } from '../plugins';
-import { Memory } from '@material-ui/icons';
+import { registerPlugin } from '../plugins';
+import { Memory } from '@mui/icons-material';
 export { default as SystemHealth } from './Health';
 import Content from './Content';
-import { once } from 'lodash';
+import { once } from 'lodash-es';
 
 export const useSystem = once(() => {
-  Plugins.register({
+  registerPlugin({
     name: 'system',
     content: { title: 'System', icon: Memory, component: Content },
   });

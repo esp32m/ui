@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import {
   Button,
   Grid,
-  makeStyles,
   ButtonProps,
   Tooltip,
   IconButton,
   Menu,
   MenuItem,
   ListItemText,
-} from '@material-ui/core';
-import { Settings } from '@material-ui/icons';
+} from '@mui/material';
+import { Settings } from '@mui/icons-material';
 import * as Backend from '../../backend';
-import { WidgetBox, useModuleState, useConfig } from '../../app';
+import { WidgetBox, useModuleState, useConfig } from '../..';
 
 import { IGpioState, Name, IGpioConfig, PinConfig, PinMode } from './types';
 import PinConfigForm from './PinConfig';
 import LedcTimerConfigForm from './LedcTimerConfig';
-
-interface IProps {
-  state: IGpioState;
-  config: IGpioConfig;
-}
+import { styled } from '@mui/material/styles';
 
 interface IPinProps {
   pin: number;
@@ -31,12 +25,15 @@ interface IPinProps {
   onClick: (pin: number, target: HTMLElement) => void;
 }
 
-const useStyles = makeStyles({
-  pinButton: { minWidth: 45, paddingLeft: 6, paddingRight: 6, margin: 3 },
-  filler: { flexGrow: 1 },
-  bottomContainer: { justifyContent: 'space-between' },
-  icon: { padding: 8 },
+const PinButton = styled(Button)({
+  minWidth: 45,
+  paddingLeft: 6,
+  paddingRight: 6,
+  margin: 3,
 });
+const BottomContainer = styled(Grid)({ justifyContent: 'space-between' });
+const StyledIcon = styled(IconButton)({ padding: 8 });
+const Filler = styled(Grid)({ flexGrow: 1 });
 
 interface IPinLayout {
   left: Array<number>;
@@ -64,17 +61,15 @@ const Pin = ({ pin, config, state, onClick }: IPinProps) => {
   let label =
     pin < 0 ? PinLabels[-pin] : `${pin} ${PinTypeShort[config?.[0] || 0]}`;
   if (state != null) label += ` ${state}`;
-  const classes = useStyles();
   const bp: ButtonProps = {
     variant: 'contained',
-    className: classes.pinButton,
     color: state ? 'secondary' : 'primary',
     disabled: pin < 0,
     onClick: (e) => onClick(pin, e.currentTarget),
   };
   return (
     <Grid item>
-      <Button {...bp}>{label}</Button>
+      <PinButton {...bp}>{label}</PinButton>
     </Grid>
   );
 };
@@ -84,17 +79,9 @@ const enum ConfigFormType {
   LedcTimers,
 }
 
-interface IRootState extends Backend.IRootState {
-  [Name]: IGpioState;
-}
-
-const content = connect((state: IRootState) => ({
-  state: Backend.selectState<IGpioState>(state, Name),
-  config: Backend.selectConfig<IGpioConfig>(state, Name),
-}))(({ state, config }: IProps) => {
-  useModuleState(Name);
-  useConfig(Name);
-  const classes = useStyles();
+export default () => {
+  const state = useModuleState<IGpioState>(Name);
+  const [config] = useConfig<IGpioConfig>(Name);
   const [configPin, setConfigPin] = useState<number>(-1);
   const [clickedPin, setClickedPin] = useState<number>(-1);
   const [configForm, setConfigForm] = useState<ConfigFormType>(
@@ -140,7 +127,7 @@ const content = connect((state: IRootState) => ({
         <Grid item>
           <Pin pin={lp} config={pc[lp]} state={ps[lp]} {...basePinProps} />
         </Grid>
-        <Grid className={classes.filler} item />
+        <Filler item />
         <Grid item>
           <Pin pin={rp} config={pc[rp]} state={ps[rp]} {...basePinProps} />
         </Grid>
@@ -179,15 +166,14 @@ const content = connect((state: IRootState) => ({
       title="GPIO pins"
       action={
         <Tooltip title="configure">
-          <IconButton
-            className={classes.icon}
+          <StyledIcon
             aria-label="configure"
             aria-controls="simple-menu"
             aria-haspopup="true"
             onClick={handleConfigure}
           >
             <Settings />
-          </IconButton>
+          </StyledIcon>
         </Tooltip>
       }
     >
@@ -223,9 +209,7 @@ const content = connect((state: IRootState) => ({
         </MenuItem>
       </Menu>
       {sidePins}
-      <Grid container className={classes.bottomContainer}>
-        {bottomPins}
-      </Grid>
+      <BottomContainer container>{bottomPins}</BottomContainer>
       <PinConfigForm
         pin={configPin}
         config={pc[configPin]}
@@ -240,6 +224,4 @@ const content = connect((state: IRootState) => ({
       }
     </WidgetBox>
   );
-});
-
-export default content;
+};

@@ -1,11 +1,11 @@
-import { once } from 'lodash';
+import { once } from 'lodash-es';
 
-import { Plugins } from '../../plugins';
+import { registerPlugin } from '../../plugins';
 import { useDebug } from '../shared';
 import content from './Content';
 import { Name } from './types';
 
 export const useTasks = once((props?: unknown) => {
   useDebug();
-  Plugins.register({ name: Name, debug: { content, props } });
+  registerPlugin({ name: Name, debug: { content, props } });
 });

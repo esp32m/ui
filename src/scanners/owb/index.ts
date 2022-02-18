@@ -1,6 +1,6 @@
-import { once } from 'lodash';
+import { once } from 'lodash-es';
 import { Reducer } from 'redux';
-import { Plugins } from '../..';
+import { registerPlugin } from '../..';
 import { Name } from './types';
 import { useScanners } from '../shared';
 import Scanner from './Scanner';
@@ -18,5 +18,5 @@ const reducer: Reducer = (state = {}, { type, payload }) => {
 
 export const useOwbScanner = once(() => {
   useScanners();
-  Plugins.register({ name: Name, reducer, scanner: { component: Scanner } });
+  registerPlugin({ name: Name, reducer, scanner: { component: Scanner } });
 });

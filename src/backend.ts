@@ -1,8 +1,8 @@
-import debounce from 'lodash/debounce';
+import {debounce} from 'lodash-es';
 import WebSocket from 'reconnecting-websocket';
 import { Action, AnyAction, Dispatch, Middleware } from 'redux';
 
-import { Plugins } from './plugins';
+import { registerPlugin } from './plugins';
 
 export const Name = 'backend';
 
@@ -269,4 +269,4 @@ export async function setConfig(
   return result;
 }
 
-Plugins.register({ name: Name, reducer });
+registerPlugin({ name: Name, reducer });

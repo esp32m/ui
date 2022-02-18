@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   ButtonProps,
   Divider,
   Grid,
-  makeStyles,
   MenuItem,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Backend, WidgetBox } from '../..';
+import { styled } from '@mui/material/styles';
 
 const NoteFreq = [
   [16, 17, 18, 19, 21, 22, 23, 25, 26, 28, 29, 31],
@@ -56,10 +56,8 @@ const OctaveNames = [
   'six-line',
   'seven-line',
 ];
-const useStyles = makeStyles({
-  noteButton: { minWidth: 30, padding: 0, marginTop: 6, marginBottom: 6 },
-  divider: { marginBottom: 12, marginTop: 12 },
-});
+  const NoteButton = styled(Button)({ minWidth: 30, padding: 0, marginTop: 6, marginBottom: 6 });
+  const StyledDivider = styled(Divider)({ marginBottom: 12, marginTop: 12 });
 
 const toMenuItem = (e: string, i: number) => (
   <MenuItem key={i} value={i}>
@@ -81,7 +79,6 @@ const content = (props: { name: string; title?: string }) => {
   const [playing, setPlaying] = useState(false);
   const [music, setMusic] = useState(JSON.stringify(HappyBirthday));
   const [error, setError] = useState('');
-  const classes = useStyles();
   const { name, title } = props;
   const play = (data: any) => {
     setPlaying(true);
@@ -91,7 +88,7 @@ const content = (props: { name: string; title?: string }) => {
     try {
       play(JSON.parse(music));
       setError('');
-    } catch (e) {
+    } catch (e:any) {
       setError(e.message || e);
     }
   };
@@ -102,14 +99,13 @@ const content = (props: { name: string; title?: string }) => {
   const toNoteButton = (e: string, i: number) => {
     const bp: ButtonProps = {
       variant: 'contained',
-      className: classes.noteButton,
       color: 'secondary',
       disabled: playing,
       onClick: () => playNote(i),
     };
     return (
-      <Grid item xs={1}>
-        <Button {...bp}>{e}</Button>
+      <Grid item xs={1} key={i}>
+        <NoteButton {...bp}>{e}</NoteButton>
       </Grid>
     );
   };
@@ -118,6 +114,7 @@ const content = (props: { name: string; title?: string }) => {
       <Grid container spacing={3}>
         <Grid item xs={9}>
           <TextField
+            variant="standard"
             label="Octave"
             value={octave}
             onChange={(e) => setOctave(Number(e.target.value))}
@@ -129,6 +126,7 @@ const content = (props: { name: string; title?: string }) => {
         </Grid>
         <Grid item xs={3}>
           <TextField
+            variant="standard"
             label="Duration, ms"
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
@@ -138,10 +136,11 @@ const content = (props: { name: string; title?: string }) => {
       <Grid container spacing={1}>
         {NoteNames.map(toNoteButton)}
       </Grid>
-      <Divider className={classes.divider} />
+      <StyledDivider/>
       <Grid container spacing={3} alignItems="flex-end">
         <Grid item xs={10}>
           <TextField
+            variant="standard"
             label="Music as [frequency,duration...]"
             value={music}
             helperText={error}

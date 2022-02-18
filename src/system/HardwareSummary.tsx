@@ -1,34 +1,23 @@
-import React from 'react';
-import { connect } from 'react-redux';
-
-import * as Backend from '../backend';
-import { WidgetBox, NameValueList, formatBytes, useModuleState } from '../app';
+import { WidgetBox, NameValueList, formatBytes, useModuleState } from '..';
 
 import {
   Name,
   IHardwareState,
-  ChipModel,
-  ChipFeatures,
   Models,
   Features,
   ResetReasons,
 } from './types';
 import { flashMode } from './utils';
 
-interface IProps {
-  state: IHardwareState;
-}
-
 function features(features: number) {
   const list = [];
-  for (let [key, value] of Object.entries(Features))
+  for (const [key, value] of Object.entries(Features))
     if (features & (key as unknown as number)) list.push(value);
   return list.join(', ');
 }
 
-function Summary({ state }: IProps) {
-  useModuleState(Name);
-  const { flash, heap, chip, spiffs, psram } = state || {};
+export default ()=>{
+  const { flash, heap, chip, spiffs, psram } = useModuleState<IHardwareState>(Name) || {};
   const list = [];
   if (chip) {
     if (chip.revision || chip.freq)
@@ -95,6 +84,3 @@ function Summary({ state }: IProps) {
   );
 }
 
-export default connect((state: Backend.IRootState) => ({
-  state: Backend.selectState<IHardwareState>(state, Name),
-}))(Summary);

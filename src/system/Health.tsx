@@ -1,20 +1,17 @@
-import React from 'react';
-import { connect } from 'react-redux';
 
-import * as Backend from '../backend';
 import {
   WidgetBox,
   NameValueList,
   formatBytes,
   useModuleState,
   millisToStr,
-} from '../app';
+} from '..';
 
 import { Name, IHardwareState, IAppState, ResetReasons } from './types';
 
-function Summary({ hw, app }: { hw: IHardwareState; app: IAppState }) {
-  useModuleState(Name);
-  useModuleState('app');
+export default ()=> {
+  const hw=useModuleState<IHardwareState>(Name);
+  const app=useModuleState<IAppState>('app');
   const list = [];
   if (app) {
     const { time, uptime } = app || {};
@@ -64,8 +61,3 @@ function Summary({ hw, app }: { hw: IHardwareState; app: IAppState }) {
     </WidgetBox>
   );
 }
-
-export default connect((state: Backend.IRootState) => ({
-  hw: Backend.selectState<IHardwareState>(state, Name),
-  app: Backend.selectState<IAppState>(state, 'app'),
-}))(Summary);

@@ -6,8 +6,8 @@ import {
   SignalCellular2Bar,
   SignalCellular3Bar,
   SignalCellular4Bar,
-} from '@material-ui/icons';
-import { Tooltip } from '@material-ui/core';
+} from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 interface IProps {
   rssi: number;
@@ -22,7 +22,7 @@ const icons = [
 ];
 
 export default function ({ rssi }: IProps) {
-  let I: React.ComponentType = icons[rssiToLevel(rssi, 5)];
+  const I: React.ComponentType = icons[rssiToLevel(rssi, 5)];
   const tt = (
     <>
       <div>{'signal: ' + rssiToStr(rssi)}</div>

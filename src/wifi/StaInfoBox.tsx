@@ -1,18 +1,11 @@
-import React from 'react';
-import { connect } from 'react-redux';
-
-import * as Backend from '../backend';
-import { WidgetBox, NameValueList, useModuleState } from '../app';
+import { WidgetBox, NameValueList, useModuleState } from '..';
 
 import { Name, WifiMode, IWifiState } from './types';
 import { rssiToStr } from '../utils';
 
-interface IProps {
-  state: IWifiState;
-}
 
-function StaInfoBox({ state }: IProps) {
-  useModuleState(Name);
+export default()=> {
+  const state=useModuleState<IWifiState>(Name);
   const { sta, mode, ch } = state || {};
   if (!sta || ![WifiMode.Sta, WifiMode.ApSta].includes(mode)) return null;
   const list = [];
@@ -32,7 +25,3 @@ function StaInfoBox({ state }: IProps) {
     </WidgetBox>
   );
 }
-
-export default connect((state: Backend.IRootState) => ({
-  state: Backend.selectState<IWifiState>(state, Name),
-}))(StaInfoBox);

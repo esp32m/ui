@@ -1,11 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Switch } from '@material-ui/core';
 import { IState, IProps, Mode } from './types';
 import * as Backend from '../../backend';
 import { useModuleState } from '../../app';
-import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 interface IButtonsProps {
   mode: Mode;
@@ -13,10 +11,8 @@ interface IButtonsProps {
   disabled: boolean;
 }
 
-const useStyles = makeStyles({
-  title: { alignSelf: 'center' },
-  buttons: { marginLeft: 'auto' },
-});
+const Title = styled(Grid)({ alignSelf: 'center' });
+const StyledButtons = styled(Grid)({ marginLeft: 'auto' });
 
 const Buttons = ({ mode, onChange, disabled }: IButtonsProps) => {
   return (
@@ -37,21 +33,15 @@ const Buttons = ({ mode, onChange, disabled }: IButtonsProps) => {
   );
 };
 
-export default connect((state: any, props: IProps) => ({
-  state: Backend.selectState<IState>(state, props.name),
-}))(({ name, title, state }: { state: IState } & IProps) => {
-  useModuleState(name);
-  const classes = useStyles();
+export default ({ name, title }:  IProps) => {
+  const state=useModuleState<IState>(name);
   const [disabled, setDisabled] = React.useState(false);
   if (!state) return null;
 
   return (
     <Grid container>
-      <Grid item className={classes.title}>
-        {' '}
-        {title}{' '}
-      </Grid>
-      <Grid item className={classes.buttons}>
+      <Title item> {title} </Title>
+      <StyledButtons item>
         <Buttons
           mode={state.mode}
           onChange={(mode: Mode) => {
@@ -60,7 +50,7 @@ export default connect((state: any, props: IProps) => ({
           }}
           disabled={disabled}
         />
-      </Grid>
+      </StyledButtons>
     </Grid>
   );
-});
+};

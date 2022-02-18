@@ -1,72 +1,59 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
-import { Divider, makeStyles } from '@material-ui/core';
+import { Divider } from '@mui/material';
 
-import { Plugins } from '../../plugins';
-import * as Backend from '../../backend';
-import { WidgetBox, useModuleState } from '../../app';
+import { WidgetBox, useModuleState } from '../..';
 
 import { ITasksState, Name } from './types';
+import { styled } from '@mui/material/styles';
 
-interface IProps {
-  state: ITasksState;
-}
 
-interface IRootState extends Backend.IRootState {
-  [Name]: ITasksState;
-}
-
-const useStyles = makeStyles({
-  colNumber: {
+const ColNumber = styled('span')({
     display: 'inline-block',
     width: '3em',
     height: '100%',
     textAlign: 'right',
     paddingRight: 10,
-  },
-  colName: {
+  });
+  const  ColName= styled('span')( {
     height: '100%',
     paddingRight: 5,
     paddingLeft: 5,
     display: 'inline-block',
     width: '18em',
-  },
-  colTime: {
+  });
+  const   ColTime= styled('span')( {
     height: '100%',
     paddingRight: 5,
     paddingLeft: 5,
     display: 'inline-block',
     width: '6em',
-  },
-  colStack: {
+  });
+  const   ColStack= styled('span')( {
     height: '100%',
     paddingRight: 5,
     paddingLeft: 5,
     display: 'inline-block',
     width: '6em',
-  },
-});
+  });
+
 
 const Row = ({ data, index, style }: ListChildComponentProps) => {
   const item = index < 0 ? ['Id', 'Name', 'CPU', 'Stack'] : data[index];
-  const classes = useStyles();
+  
   return (
     <div style={style}>
-      <span className={classes.colNumber}>{item[0]}</span>
-      <span className={classes.colName}>{item[1]}</span>
-      <span className={classes.colTime}>
+      <ColNumber>{item[0]}</ColNumber>
+      <ColName>{item[1]}</ColName>
+      <ColTime>
         {index < 0 ? item[2] : `${Math.round(item[2] * 100)}%`}
-      </span>
-      <span className={classes.colStack}>{item[3]}</span>
+      </ColTime>
+      <ColStack>{item[3]}</ColStack>
     </div>
   );
 };
 
-const Tasks = connect((state: IRootState) => ({
-  state: Backend.selectState<ITasksState>(state, Name),
-}))(({ state }: IProps) => {
-  useModuleState(Name);
+export default () =>  {
+  const state=useModuleState<ITasksState>(Name);
   const { rt, tasks } = state || {};
   if (!tasks) return null;
   const data: Array<[number, string, number, number]> = tasks.map((i) => [
@@ -90,6 +77,4 @@ const Tasks = connect((state: IRootState) => ({
       <List {...gp}>{Row}</List>
     </WidgetBox>
   );
-});
-
-export default Tasks;
+};
