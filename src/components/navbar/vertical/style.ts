@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ElementType } from 'react';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 import {
@@ -14,7 +14,7 @@ import {
 type IProps = LinkProps & ListItemButtonProps;
 
 interface ListItemStyleProps extends IProps {
-  component?: ReactNode;
+  component?: ElementType;
   to?: string;
   activeRoot?: boolean;
   activeSub?: boolean;

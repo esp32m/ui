@@ -17,7 +17,7 @@ import {
   isFunction,
   useFormik,
 } from 'formik';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ButtonBar, IButtonProps } from '..';
 
 interface IHookGeneratedProps {
@@ -69,9 +69,10 @@ export const useDialogForm = (
   ];
 };
 
-interface IDialogFormProps extends Omit<DialogProps, 'open'> {
+interface IDialogFormProps extends Omit<Omit<DialogProps, 'open'>,'children'> {
   hook: IHookGeneratedProps;
   buttons?: IButtonProps[] | undefined;
+  children: ((props: FormikProps<FormikValues>) => React.ReactNode) | React.ReactNode;
 }
 
 const defaultButtons = [

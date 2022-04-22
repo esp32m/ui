@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ElementType } from 'react';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 import { Button, Popover, ButtonProps, LinkProps } from '@mui/material';
@@ -8,7 +8,7 @@ import { Button, Popover, ButtonProps, LinkProps } from '@mui/material';
 type IProps = LinkProps & ButtonProps;
 
 interface ListItemStyleProps extends IProps {
-  component?: ReactNode;
+  component?: ElementType;
   to?: string;
   activeRoot?: boolean;
   activeSub?: boolean;

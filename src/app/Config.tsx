@@ -23,7 +23,7 @@ interface IFormProps extends Partial<FormikConfig<FormikValues>> {
   initial: any;
 }
 
-export function Form(props: React.PropsWithChildren<IFormProps>) {
+export function Form(props: IFormProps) {
   const handleSubmit = async (values: FormikValues) => {
     const v = diff(props.initial, values);
     await Backend.setConfig(name, v);
@@ -54,7 +54,7 @@ export const Box = (props: React.PropsWithChildren<IProps>) => {
                   <Save />
                 </StyledIconButton>
               </Tooltip>
-            ) : undefined
+            ) : null
           }
         >
           {children}

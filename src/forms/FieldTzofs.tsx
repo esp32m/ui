@@ -91,7 +91,7 @@ export default (props: FieldProps<TextFieldProps>) => {
       if (name != null) setFieldValue(name, hr2min(e.target.value));
     },
     onBlur,
-    helperText: error && errors[name],
+    helperText: error && (errors[name]+''),
     ...rest,
   };
   return <TextField InputProps={{ inputComponent: TextMaskCustom as any}} {...p} />;

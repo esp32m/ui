@@ -1,4 +1,3 @@
-import React from 'react';
 import { Formik, Form, FormikConfig, FormikValues, isFunction } from 'formik';
 import { SubmitHandler } from './types';
 
@@ -7,7 +6,7 @@ interface IProps extends Partial<FormikConfig<FormikValues>> {
   onSubmit: SubmitHandler;
 }
 
-export default (props: React.PropsWithChildren<IProps>) => {
+export default (props: IProps) => {
   const { children, initial, onSubmit, ...other } = props;
   const fp = {
     initialValues: initial,
