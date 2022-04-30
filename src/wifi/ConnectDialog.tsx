@@ -21,7 +21,7 @@ function ConnectDialog(props: IProps) {
   const { ssid, bssid, open, onClose, ssidEditable } = props;
 
   const handleSubmit = async (values: any) => {
-    await requestConnect(values);
+    await requestConnect(values.ssid, values.bssid, values.password);
     onClose();
   };
   const initial = { ssid, bssid, password: '' };
@@ -30,7 +30,7 @@ function ConnectDialog(props: IProps) {
     <Dialog {...dp}>
       <DialogTitle>Connect to WiFi Access Point</DialogTitle>
       <DialogContent>
-        <MuiForm initial={initial} onSubmit={handleSubmit}>
+        <MuiForm initial={initial} onSubmit={handleSubmit} enableReinitialize={false}>
           {(controller) => {
             return (
               <>
