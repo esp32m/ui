@@ -1,7 +1,7 @@
 {
   "name": "@esp32m/ui",
   "sideEffects": false,
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "User interface for ESP32 Manager",
   "keywords": [
     "esp32",
@@ -27,6 +27,7 @@
     "analyze": "source-map-explorer ./dist/**/*.js",
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "watch": "tsc --watch",
     "prepare": "yarn lint && yarn build"
   },
   "dependencies": {
