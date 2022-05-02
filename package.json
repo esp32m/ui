@@ -18,7 +18,7 @@
   "homepage": "https://esp32m.com/",
   "author": "Denys Yarkovyi",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
