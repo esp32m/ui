@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { isArray } from 'lodash-es';
 import {
   AnyAction,
@@ -78,8 +78,9 @@ function init(model: IAppModel) {
     {},
     composeEnhancers(applyMiddleware(thunkMiddleware, Backend.middleware))
   );
-  const root = React.createElement(Root, { store, model, routes });
-  ReactDOM.render(root, document.getElementById('app'));
+  const rootElement = React.createElement(Root, { store, model, routes });
+  const root = createRoot(document.getElementById('app')!);
+  root.render(rootElement);
   (store.dispatch as ThunkDispatch<unknown, void, AnyAction>)(Backend.start);
 }
 
