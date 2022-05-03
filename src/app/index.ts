@@ -3,13 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { isArray } from 'lodash-es';
 import {
   AnyAction,
-  applyMiddleware,
   combineReducers,
-  compose,
-  createStore,
   Reducer,
 } from 'redux';
-import thunkMiddleware, { ThunkDispatch } from 'redux-thunk';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { Route } from 'react-router-dom';
 
@@ -18,6 +15,7 @@ import { usePlugins } from '../plugins';
 import { IAppModel, RouteCreators } from './types';
 import { resolveFunction } from './utils';
 import Root from './Root';
+import { configureStore } from '@reduxjs/toolkit';
 
 export * from './utils';
 export { useAppModel } from './model';
@@ -36,7 +34,7 @@ interface IBuildInfo {
 
 declare global {
   interface Window {
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: typeof compose;
+    // __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: typeof compose;
     __build_info?: IBuildInfo;
   }
 }
@@ -70,18 +68,22 @@ function init(model: IAppModel) {
       );
   });
 
-  const rootReducer = combineReducers(reducers);
-  const composeEnhancers =
+  const reducer = combineReducers(reducers);
+  /*const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const store = createStore(
-    rootReducer,
+    reducer,
     {},
     composeEnhancers(applyMiddleware(thunkMiddleware, Backend.middleware))
-  );
+  );*/
+  const store=configureStore({reducer, middleware: m => m().concat(Backend.middleware)});
   const rootElement = React.createElement(Root, { store, model, routes });
-  const root = createRoot(document.getElementById('app')!);
-  root.render(rootElement);
-  (store.dispatch as ThunkDispatch<unknown, void, AnyAction>)(Backend.start);
+  const app = document.getElementById('app');
+  if (app) {
+    const root = createRoot(app);
+    root.render(rootElement);
+    (store.dispatch as ThunkDispatch<unknown, void, AnyAction>)(Backend.start);
+  }
 }
 
 export function start(model: IAppModel): void {
