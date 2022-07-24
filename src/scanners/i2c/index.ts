@@ -1,4 +1,4 @@
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 import { Reducer } from 'redux';
 import { registerPlugin } from '../..';
 import { Name } from './types';

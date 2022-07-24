@@ -1,11 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { isArray } from 'lodash-es';
-import {
-  AnyAction,
-  combineReducers,
-  Reducer,
-} from 'redux';
+import { isArray } from 'lodash';
+import { AnyAction, combineReducers, Reducer } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { Route } from 'react-router-dom';
@@ -39,7 +35,8 @@ declare global {
   }
 }
 
-export const buildInfo = window.__build_info;
+export const buildInfo =
+  typeof window === 'undefined' ? undefined : window.__build_info;
 
 interface IReducers {
   [key: string]: Reducer;
@@ -76,7 +73,10 @@ function init(model: IAppModel) {
     {},
     composeEnhancers(applyMiddleware(thunkMiddleware, Backend.middleware))
   );*/
-  const store=configureStore({reducer, middleware: m => m().concat(Backend.middleware)});
+  const store = configureStore({
+    reducer,
+    middleware: (m) => m().concat(Backend.middleware),
+  });
   const rootElement = React.createElement(Root, { store, model, routes });
   const app = document.getElementById('app');
   if (app) {

@@ -1,4 +1,4 @@
-import { isArray } from 'lodash-es';
+import { isArray } from 'lodash';
 import { Table, TableRow, TableCell, TableBody } from '@mui/material';
 
 interface INameValue {

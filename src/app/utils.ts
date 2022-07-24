@@ -1,4 +1,4 @@
-import {isFunction} from 'lodash-es';
+import {isFunction} from 'lodash';
 
 export function resolveFunction<T>(
   v: T | ((...args: unknown[]) => T),

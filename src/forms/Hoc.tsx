@@ -1,5 +1,5 @@
 import { Grid, GridProps } from '@mui/material';
-import { isBoolean } from 'lodash-es';
+import { isBoolean } from 'lodash';
 
 interface IProps {
   grid?: GridProps | boolean;

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash';
 import { FormikProps } from 'formik';
 import * as Yup from 'yup';
 

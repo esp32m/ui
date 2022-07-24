@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { AnyAction } from 'redux';
 import { useModuleState } from '.';
-import { isBoolean } from 'lodash-es';
+import { isBoolean } from 'lodash';
 import { styled } from '@mui/material/styles';
 
 const Name = 'ota';

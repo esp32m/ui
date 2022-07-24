@@ -1,5 +1,5 @@
 import { BugReport } from '@mui/icons-material';
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 
 import { registerPlugin } from '../plugins';
 

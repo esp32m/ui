@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux';
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 
 import { fromBase64, registerPlugin } from '../..';
 import { useBt } from '../shared';

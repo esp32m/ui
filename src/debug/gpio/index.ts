@@ -1,4 +1,4 @@
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 
 import { registerPlugin } from '../../plugins';
 import { useDebug } from '../shared';

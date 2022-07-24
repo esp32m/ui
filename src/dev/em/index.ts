@@ -1,4 +1,4 @@
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 import { useDevices } from '../shared';
 import { registerPlugin } from '../../plugins';
 import Content from './Content';

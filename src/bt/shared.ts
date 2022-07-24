@@ -3,7 +3,7 @@ import { Bluetooth } from '@mui/icons-material';
 import { registerPlugin } from '..';
 
 import Content from './Content';
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 
 export const useBt = once(() => {
   registerPlugin({

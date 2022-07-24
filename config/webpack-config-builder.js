@@ -5,7 +5,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 const nodeEnv = process.env.NODE_ENV || "development";
 const isdev = nodeEnv == "development";
@@ -18,7 +17,6 @@ module.exports = (dir, props) => {
   const { devhost } = props || {};
 
   const sharedPlugins = [
-    new LodashModuleReplacementPlugin,
     new webpack.DefinePlugin({
       "window.__build_info": {
         version: JSON.stringify(packageJson.version),
@@ -39,8 +37,6 @@ module.exports = (dir, props) => {
     new CleanWebpackPlugin({}),
     new CompressionPlugin({
       test: /\.(js|css|html|svg)$/,
-      //      filename: '[path].br[query]',
-      //      algorithm: 'brotliCompress',
       algorithm: 'gzip',
     }),
     ...(nodeEnv == "analyze" ? [new BundleAnalyzerPlugin()] : []),
@@ -55,7 +51,6 @@ module.exports = (dir, props) => {
     devtool: isdev ? "source-map" : "hidden-source-map",
     devServer: {
       historyApiFallback: true,
-      hot: true,
       port: 9000
     },
     module: {
@@ -63,13 +58,8 @@ module.exports = (dir, props) => {
         {
           test: /\.tsx?$/,
           exclude: /node_modules/,
-          use: ["babel-loader", "ts-loader"]
-        },
-        {
-          test: /\.jsx?$/,
-          exclude: /node_modules/,
           use: ["babel-loader"]
-        }
+        },
       ]
     },
     optimization: {
@@ -82,7 +72,10 @@ module.exports = (dir, props) => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
-      modules: [path.resolve(dir, 'node_modules'), 'node_modules'],
+      alias: {
+        
+      },
+      // modules: [path.resolve(dir, 'node_modules'), 'node_modules'],
     },
     plugins: pluginsMap[mode],
     output: {

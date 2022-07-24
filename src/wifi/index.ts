@@ -4,7 +4,7 @@ import { Wifi } from '@mui/icons-material';
 import { Name } from './types';
 
 import Page from './Content';
-import { once } from 'lodash-es';
+import { once } from 'lodash';
 
 export { default as ScanList } from './ScanList';
 export { default as ScannerBox } from './ScannerBox';

@@ -1,4 +1,4 @@
-import {debounce} from 'lodash-es';
+import { debounce } from 'lodash';
 import WebSocket from 'reconnecting-websocket';
 import { Action, AnyAction, Dispatch, Middleware } from 'redux';
 
@@ -18,7 +18,7 @@ declare global {
   }
 }
 
-const config = window.esp32m;
+const config = typeof window === 'undefined' ? undefined : window.esp32m;
 
 /* eslint-disable @typescript-eslint/no-explicit-any*/
 export type Data = any;
@@ -87,7 +87,11 @@ const DefaultState: IState = {
   config: {},
 };
 
-const url = 'ws://' + (config?.backend?.host || window.location.host) + '/ws';
+const url =
+  'ws://' +
+  (config?.backend?.host ||
+    (typeof window === 'undefined' ? 'localhost' : window.location.host)) +
+  '/ws';
 
 const ws = new WebSocket(url, undefined, { startClosed: true });
 
