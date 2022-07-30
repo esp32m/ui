@@ -1,10 +1,9 @@
 import { AnyAction } from 'redux';
-import { registerPlugin } from '../plugins';
-import { Wifi } from '@mui/icons-material';
+import { Wifi as icon } from '@mui/icons-material';
 import { Name } from './types';
 
 import Page from './Content';
-import { once } from 'lodash';
+import { IContentPlugin, IReduxPlugin } from '../app/types';
 
 export { default as ScanList } from './ScanList';
 export { default as ScannerBox } from './ScannerBox';
@@ -21,10 +20,8 @@ const reducer = (state = {}, { type, payload }: AnyAction) => {
   return state;
 };
 
-export const useWifi = once(() => {
-  registerPlugin({
-    name: Name,
-    reducer,
-    content: { title: 'WiFi', icon: Wifi, component: Page },
-  });
-});
+export const Wifi: IContentPlugin & IReduxPlugin = {
+  name: Name,
+  reducer,
+  content: { title: 'WiFi', icon, component: Page },
+};

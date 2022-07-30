@@ -1,10 +1,10 @@
-import { once } from 'lodash';
-import { registerPlugin } from '../../plugins';
-import { useDevices } from '../shared';
+import { Devices } from '../shared';
+import { IDevicePlugin } from '../types';
 import Content from './Content';
 import { Name, IProps } from './types';
 
-export const useDsts = once((props?: IProps) => {
-  useDevices();
-  registerPlugin({ name: Name, device: { component: Content, props } });
+export const Dsts = (props?: IProps): IDevicePlugin => ({
+  name: Name,
+  use: Devices,
+  device: { component: Content, props },
 });

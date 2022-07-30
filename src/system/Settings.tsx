@@ -4,7 +4,7 @@ import { Name, ISystemConfig } from './types';
 import {
   Expander,
   ConfigBox,
-  useConfig,
+  useModuleConfig,
   FieldSwitch,
   FieldSelect,
 } from '..';
@@ -32,7 +32,7 @@ const FreqField = ({ i }: { i: number }) => (
 );
 
 export default () => {
-  const [config] = useConfig<ISystemConfig>(Name);
+  const [config] = useModuleConfig<ISystemConfig>(Name);
   if (!config) return null;
 
   return (

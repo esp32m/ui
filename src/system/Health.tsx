@@ -16,7 +16,7 @@ export default ()=> {
   if (app) {
     const { time, uptime } = app || {};
     if (uptime) list.push(['Uptime', millisToStr(uptime)]);
-    if (time) list.push(['Chip time', new Date(time * 1000).toUTCString()]);
+    if (time) list.push(['Chip time', new Date(time * 1000).toLocaleString()]);
   }
   if (hw) {
     const { heap, chip, spiffs } = hw || {};

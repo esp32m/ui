@@ -1,9 +1,9 @@
-import { useDevices } from '../shared';
-import { registerPlugin } from '../../plugins';
+import { Devices } from '../shared';
 import Content from './Content';
+import { IDevicePlugin } from '../types';
 
-export const useIna = (name:string, title?:string): void => {
-  useDevices();
-  registerPlugin({ name, device: { component: Content, props:{name, title} } });
-};
-
+export const Ina = (name: string, title?: string): IDevicePlugin => ({
+  name,
+  use: Devices,
+  device: { component: Content, props: { name, title } },
+});

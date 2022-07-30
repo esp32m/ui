@@ -26,3 +26,12 @@ const _staticConfig: IStaticConfig = {};
 export const useStaticConfig = (key: string) => _staticConfig[key];
 export const setStaticConfig = (key: string, value: unknown) =>
   ((_staticConfig as Record<string, unknown>)[key] = value);
+
+export const netmask2cidr = (mask: string) => {
+  const maskNodes = mask.match(/(\d+)/g);
+  let cidr = 0;
+  for (const i in maskNodes)
+    cidr += ((Number(maskNodes[Number(i)]) >>> 0).toString(2).match(/1/g) || [])
+      .length;
+  return cidr;
+};

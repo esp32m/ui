@@ -1,12 +1,13 @@
-import { useDevices } from '../shared';
-import { registerPlugin } from '../../plugins';
+import { Devices } from '../shared';
 import { Name } from './types';
 import Content from './Content';
+import { IDevicePlugin } from '../types';
 
-export const useMax6675 = (name: string = Name, title?: string): void => {
-  useDevices();
-  registerPlugin({
-    name,
-    device: { component: Content, props: { name, title } },
-  });
-};
+export const Max6675 = (
+  name: string = Name,
+  title?: string
+): IDevicePlugin => ({
+  name,
+  use: Devices,
+  device: { component: Content, props: { name, title } },
+});

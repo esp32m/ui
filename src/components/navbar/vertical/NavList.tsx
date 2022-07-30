@@ -21,7 +21,7 @@ export function NavListRoot({ list, isCollapse }: NavListRootProps) {
 
   const active = getActive(list.path, pathname);
 
-  const [open, setOpen] = useState(active);
+  const [open, setOpen] = useState(true);
 
   const hasChildren = list.children;
 
@@ -38,7 +38,7 @@ export function NavListRoot({ list, isCollapse }: NavListRootProps) {
 
         {!isCollapse && (
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
+            <List component="div" disablePadding sx={{ pl: 3 }}>
               {(list.children || []).map((item) => (
                 <NavListSub key={item.title} list={item} />
               ))}

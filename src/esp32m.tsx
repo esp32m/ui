@@ -1,11 +1,18 @@
 import { Grid } from '@mui/material';
 import { Home } from '@mui/icons-material';
 
-import { IAppModel } from './app/types';
+import { IAppModel, IContentPlugin } from './app/types';
 import { start } from './app';
 
-import { registerPlugin, findPlugin, SystemHealth, StaInfoBox, ApInfoBox, MqttStateBox } from '.';
-import { once } from 'lodash';
+import {
+  registerPlugin,
+  findPlugin,
+  SystemHealth,
+  StaInfoBox,
+  ApInfoBox,
+  MqttStateBox,
+} from '.';
+
 const logo = (
   <img
     style={{ maxWidth: '100%', objectFit: 'cover' }}
@@ -22,14 +29,11 @@ const component = () => (
   </Grid>
 );
 
-export const useDefaultHome = once(() => {
-  registerPlugin({
-    name: 'home',
-    content: { icon: Home, title: 'Home', component },
-  });
-});
-
 export function startUi(model?: IAppModel): void {
-  if (!findPlugin('home')) useDefaultHome();
+  if (!findPlugin('home'))
+    registerPlugin({
+      name: 'home',
+      content: { icon: Home, title: 'Home', component },
+    } as IContentPlugin);
   start(Object.assign({}, { logo, title: 'ESP32 Manager' }, model));
 }

@@ -8,7 +8,13 @@ import { Route } from 'react-router-dom';
 
 import * as Backend from '../backend';
 import { usePlugins } from '../plugins';
-import { IAppModel, RouteCreators } from './types';
+import {
+  IAppModel,
+  IContentPlugin,
+  IReduxPlugin,
+  IRouterPlugin,
+  RouteCreators,
+} from './types';
 import { resolveFunction } from './utils';
 import Root from './Root';
 import { configureStore } from '@reduxjs/toolkit';
@@ -18,7 +24,7 @@ export { useAppModel } from './model';
 export {
   Form as ConfigForm,
   Box as ConfigBox,
-  useModuleConfig as useConfig,
+  useModuleConfig,
 } from './Config';
 export { useModuleState } from './State';
 
@@ -45,7 +51,7 @@ interface IReducers {
 function init(model: IAppModel) {
   const reducers: IReducers = {};
   const routes: RouteCreators = [];
-  const plugins = usePlugins();
+  const plugins = usePlugins<IContentPlugin & IRouterPlugin & IReduxPlugin>();
   plugins.forEach((p) => {
     if (p.reducer) {
       if (isArray(p.reducer))
@@ -53,26 +59,19 @@ function init(model: IAppModel) {
       else reducers[p.name] = p.reducer as Reducer;
     }
     if (p.routes) routes.push(...resolveFunction(p.routes as RouteCreators));
-    if (p.content)
+    if (p.content?.component) {
+      const { component } = p.content;
       routes.push(() =>
         React.createElement(Route, {
           path: '/' + p.name,
-          element: React.createElement(
-            (p.content as { component: React.ComponentType }).component
-          ),
+          element: React.createElement(component),
           key: p.name,
         })
       );
+    }
   });
 
   const reducer = combineReducers(reducers);
-  /*const composeEnhancers =
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-  const store = createStore(
-    reducer,
-    {},
-    composeEnhancers(applyMiddleware(thunkMiddleware, Backend.middleware))
-  );*/
   const store = configureStore({
     reducer,
     middleware: (m) => m().concat(Backend.middleware),

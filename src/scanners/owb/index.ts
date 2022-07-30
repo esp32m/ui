@@ -1,9 +1,9 @@
-import { once } from 'lodash';
 import { Reducer } from 'redux';
-import { registerPlugin } from '../..';
 import { Name } from './types';
-import { useScanners } from '../shared';
+import { Scanners } from '../shared';
 import Scanner from './Scanner';
+import { IScannerPlugin } from '../types';
+import { IReduxPlugin } from '../../app/types';
 
 const reducer: Reducer = (state = {}, { type, payload }) => {
   if (payload && payload.source == Name && payload.name == 'scan')
@@ -16,7 +16,9 @@ const reducer: Reducer = (state = {}, { type, payload }) => {
   return state;
 };
 
-export const useOwbScanner = once(() => {
-  useScanners();
-  registerPlugin({ name: Name, reducer, scanner: { component: Scanner } });
-});
+export const OwbScanner: IScannerPlugin & IReduxPlugin = {
+  name: Name,
+  use: Scanners,
+  reducer,
+  scanner: { component: Scanner },
+};

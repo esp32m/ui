@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 import { FormikConsumer } from 'formik';
 import {
-  Grid,
   MenuItem,
   List,
   ListItem,
@@ -10,25 +9,8 @@ import {
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 
-import {
-  IWifiConfig,
-  Name,
-  WifiPower,
-  ApEntries,
-  ApEntryFlags,
-} from './types';
-import {
-  Expander,
-  FieldText,
-  validators,
-  ConfigBox,
-  useAlert,
-  Alert,
-  useConfig,
-  FieldSwitch,
-  FieldSelect,
-  FieldTzofs
-} from '..';
+import { IWifiConfig, Name, WifiPower, ApEntries, ApEntryFlags } from './types';
+import { ConfigBox, useAlert, Alert, useModuleConfig, FieldSelect, Expander } from '..';
 import { requestDeleteAp } from './utils';
 
 const PowerOptions = [
@@ -85,19 +67,10 @@ function SavedAps({
   );
 }
 
-const ipcv = Yup.object().shape({
-  ip: validators.ipv4,
-  mask: validators.ipv4,
-  gw: validators.ipv4,
-});
+const ValidationSchema = Yup.object().shape({});
 
-const ValidationSchema = Yup.object().shape({
-  sta: ipcv,
-  ap: ipcv,
-});
-
-export default ()=> {
-  const [config, refreshConfig] = useConfig<IWifiConfig>(Name);
+export default () => {
+  const [config, refreshConfig] = useModuleConfig<IWifiConfig>(Name);
   if (!config) return null;
 
   return (
@@ -110,68 +83,18 @@ export default ()=> {
       <FormikConsumer>
         {(controller) => (
           <>
-            <Expander title="Station">
-              <FieldSwitch name="sta.dhcp" label="Use DHCP" />
-              {!controller.values.sta?.dhcp && (
-                <Grid container spacing={3}>
-                  <Grid item xs>
-                    <FieldText name="sta.ip" label="IP address" />
-                  </Grid>
-                  <Grid item xs>
-                    <FieldText name="sta.mask" label="Netmask" />
-                  </Grid>
-                  <Grid item xs>
-                    <FieldText name="sta.gw" label="Gateway" />
-                  </Grid>
-                </Grid>
-              )}
-            </Expander>
-            <Expander title="Access point">
-              <Grid container spacing={3}>
-                <Grid item xs>
-                  <FieldText name="ap.ip" label="IP address" />
-                </Grid>
-                <Grid item xs>
-                  <FieldText name="ap.mask" label="Netmask" />
-                </Grid>
-                <Grid item xs>
-                  <FieldText name="ap.gw" label="Gateway" />
-                </Grid>
-              </Grid>
-            </Expander>
-            <Expander title="Time synchronization">
-              <FieldSwitch name="time.ntp" label="Use NTP" />
-              {controller.values.time?.ntp && (
-                <Grid container spacing={3}>
-                  <Grid item xs>
-                    <FieldText name="time.host" label="NTP hostname" />
-                  </Grid>
-                  <Grid item xs>
-                    <FieldTzofs
-                      name="time.tz"
-                      label="Time zone offset"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <FieldTzofs name="time.dst" label="DST offset" />
-                  </Grid>
-                </Grid>
-              )}
-            </Expander>
-            <Expander title="Advanced">
-              <FieldSelect fullWidth name="txp" label="TX power">
-                {PowerOptions.map((o) => (
-                  <MenuItem key={o[0] || '_'} value={o[0]}>
-                    {o[1]}
-                  </MenuItem>
-                ))}
-              </FieldSelect>
-            </Expander>
+            <FieldSelect fullWidth name="txp" label="TX power">
+              {PowerOptions.map((o) => (
+                <MenuItem key={o[0] || '_'} value={o[0]}>
+                  {o[1]}
+                </MenuItem>
+              ))}
+            </FieldSelect>
+
             <SavedAps aps={config.aps} refreshConfig={refreshConfig} />
           </>
         )}
       </FormikConsumer>
     </ConfigBox>
   );
-}
-
+};

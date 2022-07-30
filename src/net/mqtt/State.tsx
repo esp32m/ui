@@ -1,4 +1,4 @@
-import { WidgetBox, NameValueList, useModuleState } from '..';
+import { WidgetBox, NameValueList, useModuleState } from '../..';
 
 import { Name, IMqttState } from './types';
 

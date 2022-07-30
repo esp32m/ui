@@ -1,6 +1,7 @@
 import { Formik, Form, FormikConfig, FormikValues, isFunction } from 'formik';
 import { SubmitHandler } from './types';
 
+import './validation'; //static initializers
 interface IProps extends Partial<FormikConfig<FormikValues>> {
   initial: FormikValues;
   onSubmit: SubmitHandler;

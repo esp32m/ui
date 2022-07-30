@@ -1,7 +1,7 @@
 import { WidgetBox, NameValueList, useModuleState } from '..';
 
 import { Name, WifiMode, IWifiState } from './types';
-import { rssiToStr } from '../utils';
+import { netmask2cidr, rssiToStr } from '../utils';
 
 
 export default()=> {
@@ -12,7 +12,7 @@ export default()=> {
   let { ssid, ip } = sta;
   const { mac, bssid, mask, gw, rssi } = sta;
   if (bssid) ssid += ` (${bssid})`;
-  if (mask) ip += ` / ${mask}`;
+  if (mask) ip += ` / ${netmask2cidr(mask)}`;
   if (mac) list.push(['STA MAC', mac]);
   if (ssid) list.push(['SSID', ssid]);
   if (ch) list.push(['Channel', ch]);

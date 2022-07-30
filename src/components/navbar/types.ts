@@ -3,17 +3,16 @@ import { BoxProps } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export type NavListProps = {
+export interface INavItem {
   title: string;
   path: string;
   icon?: ReactElement;
+  children?: Array<INavItem>;
+}
+
+export interface NavListProps extends INavItem {
   info?: ReactElement;
-  children?: {
-    title: string;
-    path: string;
-    children?: { title: string; path: string }[];
-  }[];
-};
+}
 
 export type NavItemProps = {
   item: NavListProps;

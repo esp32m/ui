@@ -22,7 +22,7 @@ import {
   Backend,
   Alert,
   useAlert,
-  useConfig,
+  useModuleConfig,
   FieldSelect,
   FieldAutocomplete,
 } from '../..';
@@ -149,7 +149,7 @@ const ValidationSchema = Yup.object().shape({
 export default () => {
   const [tab, setTab] = useState(0);
   const { check, alertProps } = useAlert();
-  const [state = {}, refreshConfig] = useConfig<IOptions>(Name);
+  const [state = {}, refreshConfig] = useModuleConfig<IOptions>(Name);
 
   const handleSubmit = async (values: any) => {
     switch (tab) {

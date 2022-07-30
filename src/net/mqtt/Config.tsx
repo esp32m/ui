@@ -6,10 +6,10 @@ import { IMqttConfig, Name } from './types';
 import {
   FieldText,
   ConfigBox,
-  useConfig,
+  useModuleConfig,
   FieldSwitch,
   FieldPassword,
-} from '..';
+} from '../..';
 
 const ValidationSchema = Yup.object().shape({
   keepalive: Yup.number().min(0),
@@ -17,7 +17,7 @@ const ValidationSchema = Yup.object().shape({
 });
 
 export default () => {
-  const [config] = useConfig<IMqttConfig>(Name);
+  const [config] = useModuleConfig<IMqttConfig>(Name);
   if (!config) return null;
 
   return (

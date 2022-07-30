@@ -1,8 +1,6 @@
 import { AnyAction } from 'redux';
-import { once } from 'lodash';
-
-import { fromBase64, registerPlugin } from '../..';
-import { useBt } from '../shared';
+import { fromBase64 } from '../..';
+import { Bluetooth, IBluetoothPlugin } from '../shared';
 
 import Content from './Content';
 import {
@@ -14,6 +12,7 @@ import {
   IAdvData,
   Name,
 } from './types';
+import { IReduxPlugin } from '../../app/types';
 
 function parseData(buf: ArrayBuffer): IAdvData | undefined {
   const bytes = new Uint8Array(buf);
@@ -70,7 +69,9 @@ const reducer = (state: ILocalState = {}, { type, payload }: AnyAction) => {
   return state;
 };
 
-export const useBle = once(() => {
-  useBt();
-  registerPlugin({ name: Name, reducer, bt: { content: Content } });
-});
+export const Ble: IBluetoothPlugin & IReduxPlugin = {
+  name: Name,
+  use: Bluetooth,
+  reducer,
+  bt: { content: Content },
+};

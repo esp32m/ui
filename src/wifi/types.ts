@@ -99,26 +99,6 @@ export interface IRootState extends Backend.IRootState {
   [Name]: ILocalState;
 }
 
-interface IStaConfig {
-  dhcp: boolean;
-  ip: string;
-  gw: string;
-  mask: string;
-}
-
-interface IApConfig {
-  ip: string;
-  gw: string;
-  mask: string;
-}
-
-interface ITimeConfig {
-  ntp: boolean;
-  host: string;
-  tz: number;
-  dst: number;
-}
-
 export const enum ApEntryFlags {
   None = 0,
   Fallback = 1,
@@ -136,8 +116,6 @@ export interface IApEntry extends Array<string | number> {
 export type ApEntries = Array<IApEntry>;
 
 export interface IWifiConfig {
-  sta: IStaConfig;
-  ap: IApConfig;
-  time: ITimeConfig;
+  txp: number;
   aps?: ApEntries;
 }

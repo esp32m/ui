@@ -7,4 +7,4 @@ export { default as FieldAutocomplete } from './FieldAutocomplete';
 export * from './DialogForm';
 
 export { default as MuiForm } from './MuiForm';
-export { validators } from './validation';
+export { validators, useYup } from './validation';

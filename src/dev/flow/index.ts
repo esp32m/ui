@@ -1,11 +1,12 @@
-import { useDevices } from '../shared';
-import { registerPlugin } from '../../plugins';
+import { Devices } from '../shared';
+import { IDevicePlugin } from '../types';
 import Content from './Content';
 
-export const useFlowSensor = (name: string, title = 'Flow sensor'): void => {
-  useDevices();
-  registerPlugin({
-    name,
-    device: { component: Content, props: { name, title } },
-  });
-};
+export const FlowSensor = (
+  name: string,
+  title = 'Flow sensor'
+): IDevicePlugin => ({
+  name,
+  use: Devices,
+  device: { component: Content, props: { name, title } },
+});

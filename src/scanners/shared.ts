@@ -1,13 +1,8 @@
 import { Scanner } from '@mui/icons-material';
-import { once } from 'lodash';
+import { IContentPlugin } from '../app/types';
+import component from './Scanners';
 
-import { registerPlugin } from '../plugins';
-
-import Scanners from './Scanners';
-
-export const useScanners = once(() => {
-  registerPlugin({
-    name: 'bus-scanners',
-    content: { title: 'Bus scanners', icon: Scanner, component: Scanners },
-  });
-});
+export const Scanners: IContentPlugin = {
+  name: 'bus-scanners',
+  content: { title: 'Bus scanners', icon: Scanner, component },
+};

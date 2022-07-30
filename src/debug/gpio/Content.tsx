@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Settings } from '@mui/icons-material';
 import * as Backend from '../../backend';
-import { WidgetBox, useModuleState, useConfig } from '../..';
+import { WidgetBox, useModuleState, useModuleConfig } from '../..';
 
 import { IGpioState, Name, IGpioConfig, PinConfig, PinMode } from './types';
 import PinConfigForm from './PinConfig';
@@ -81,7 +81,7 @@ const enum ConfigFormType {
 
 export default () => {
   const state = useModuleState<IGpioState>(Name);
-  const [config] = useConfig<IGpioConfig>(Name);
+  const [config] = useModuleConfig<IGpioConfig>(Name);
   const [configPin, setConfigPin] = useState<number>(-1);
   const [clickedPin, setClickedPin] = useState<number>(-1);
   const [configForm, setConfigForm] = useState<ConfigFormType>(

@@ -1,13 +1,12 @@
 import { Route, Navigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
 
-import { registerPlugin } from '../plugins';
-
 import ScannerBox from './ScannerBox';
 import StaInfoBox from './StaInfoBox';
 import ApInfoBox from './ApInfoBox';
+import { IContentPlugin, IRouterPlugin } from '../app/types';
 
-const CaptivePortal = () => (
+const component = () => (
   <Grid container>
     <StaInfoBox />
     <ApInfoBox />
@@ -15,18 +14,12 @@ const CaptivePortal = () => (
   </Grid>
 );
 
-export const useCaptivePortal = () => {
-  registerPlugin({
-    name: 'cp',
-    content: { component: CaptivePortal },
-    routes: [
-      (p: any) => (
-        <Route
-          path="/generate_204"
-          {...p}
-          element={<Navigate to="/cp" />}
-        />
-      ),
-    ],
-  });
+export const CaptivePortal: IContentPlugin & IRouterPlugin = {
+  name: 'cp',
+  content: { component },
+  routes: [
+    (p) => (
+      <Route path="/generate_204" {...p} element={<Navigate to="/cp" />} />
+    ),
+  ],
 };

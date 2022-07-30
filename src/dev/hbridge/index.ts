@@ -1,14 +1,12 @@
-import { once } from 'lodash';
-import { useDevices } from '../shared';
-import { registerPlugin } from '../../plugins';
+import { Devices } from '../shared';
 import Content from './Content';
+import { IDevicePlugin } from '../types';
 
-export const useHbridge = once(
-  (nameOrList: string | Array<[string, string]>, title?: string) => {
-    useDevices();
-    registerPlugin({
-      name: 'hbridge-' + name,
-      device: { component: Content, props: { nameOrList, title } },
-    });
-  }
-);
+export const Hbridge = (
+  nameOrList: string | Array<[string, string]>,
+  title?: string
+): IDevicePlugin => ({
+  name: 'hbridge-' + nameOrList,
+  use: Devices,
+  device: { component: Content, props: { nameOrList, title } },
+});

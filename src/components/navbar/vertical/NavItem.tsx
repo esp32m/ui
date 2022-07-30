@@ -10,13 +10,23 @@ import { isExternalLink } from '..';
 
 // ----------------------------------------------------------------------
 
-export function NavItemRoot({ item, isCollapse, open = false, active, onOpen }: NavItemProps) {
+export function NavItemRoot({
+  item,
+  isCollapse,
+  open = false,
+  active,
+  onOpen,
+}: NavItemProps) {
   const { title, path, icon, info, children } = item;
 
   const renderContent = (
     <>
       {icon && <ListItemIconStyle>{icon}</ListItemIconStyle>}
-      <ListItemTextStyle disableTypography primary={title} isCollapse={isCollapse} />
+      <ListItemTextStyle
+        disableTypography
+        primary={title}
+        isCollapse={isCollapse}
+      />
       {!isCollapse && (
         <>
           {info && info}
@@ -49,12 +59,21 @@ export function NavItemRoot({ item, isCollapse, open = false, active, onOpen }: 
 
 type NavItemSubProps = Omit<NavItemProps, 'isCollapse'>;
 
-export function NavItemSub({ item, open = false, active = false, onOpen }: NavItemSubProps) {
-  const { title, path, info, children } = item;
+export function NavItemSub({
+  item,
+  open = false,
+  active = false,
+  onOpen,
+}: NavItemSubProps) {
+  const { title, path, icon, info, children } = item;
 
   const renderContent = (
     <>
-      <DotIcon active={active} />
+      {icon ? (
+        <ListItemIconStyle>{icon}</ListItemIconStyle>
+      ) : (
+        <DotIcon active={active} />
+      )}
       <ListItemText disableTypography primary={title} />
       {info && info}
       {children && <ArrowIcon open={open} />}
@@ -70,7 +89,13 @@ export function NavItemSub({ item, open = false, active = false, onOpen }: NavIt
   }
 
   return isExternalLink(path) ? (
-    <ListItemStyle component={Link} href={path} target="_blank" rel="noopener" subItem>
+    <ListItemStyle
+      component={Link}
+      href={path}
+      target="_blank"
+      rel="noopener"
+      subItem
+    >
       {renderContent}
     </ListItemStyle>
   ) : (

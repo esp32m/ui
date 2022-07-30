@@ -1,11 +1,10 @@
-import { once } from 'lodash';
-
-import { registerPlugin } from '../../plugins';
-import { useDebug } from '../shared';
+import { Debug } from '../shared';
+import { IDebugPlugin } from '../types';
 import content from './Content';
 import { Name } from './types';
 
-export const useTasks = once((props?: unknown) => {
-  useDebug();
-  registerPlugin({ name: Name, debug: { content, props } });
-});
+export const DebugTasks: IDebugPlugin = {
+  name: Name,
+  use: Debug,
+  debug: { content },
+};
